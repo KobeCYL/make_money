@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x540e;&#x7aef;&#x63a5;&#x53e3;&#x5217;&#x8868;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="后端接口列表">后端接口列表</h1>
+<h2 id="1-用户管理接口">1. 用户管理接口</h2>
+<h3 id="11-获取用户列表">1.1 获取用户列表</h3>
+<pre><code>GET /api/users
+
+请求参数：
+{
+    &quot;page&quot;: number,       // 页码
+    &quot;pageSize&quot;: number,  // 每页数量
+    &quot;keyword&quot;: string    // 搜索关键词（可选）
+}
+
+返回数据：
+{
+    &quot;code&quot;: number,      // 状态码
+    &quot;data&quot;: {
+        &quot;total&quot;: number,  // 总数
+        &quot;list&quot;: [{
+            &quot;id&quot;: string,
+            &quot;name&quot;: string,
+            &quot;rollCallCount&quot;: number,  // 被点名次数
+            &quot;lastRollCallTime&quot;: string // 上次被点名时间
+        }]
+    }
+}
+</code></pre>
+<h3 id="12-批量导入用户">1.2 批量导入用户</h3>
+<pre><code>POST /api/users/import
+
+请求参数：
+FormData:
+- file: Excel文件
+
+返回数据：
+{
+    &quot;code&quot;: number,
+    &quot;data&quot;: {
+        &quot;successCount&quot;: number,  // 成功导入数量
+        &quot;failCount&quot;: number,    // 失败数量
+        &quot;failList&quot;: [{         // 失败列表
+            &quot;row&quot;: number,
+            &quot;reason&quot;: string
+        }]
+    }
+}
+</code></pre>
+<h2 id="2-点名相关接口">2. 点名相关接口</h2>
+<h3 id="21-执行随机点名">2.1 执行随机点名</h3>
+<pre><code>POST /api/roll-call/random
+
+请求参数：
+{
+    &quot;count&quot;: number      // 点名人数，默认3
+}
+
+返回数据：
+{
+    &quot;code&quot;: number,
+    &quot;data&quot;: [{
+        &quot;id&quot;: string,
+        &quot;name&quot;: string,
+        &quot;rollCallCount&quot;: number
+    }]
+}
+</code></pre>
+<h3 id="22-记录面试官选择">2.2 记录面试官选择</h3>
+<pre><code>POST /api/roll-call/interviewers
+
+请求参数：
+{
+    &quot;rollCallId&quot;: string,    // 点名记录ID
+    &quot;candidateId&quot;: string,   // 被点名人ID
+    &quot;interviewerIds&quot;: string[]  // 面试官ID列表
+}
+
+返回数据：
+{
+    &quot;code&quot;: number,
+    &quot;data&quot;: {
+        &quot;success&quot;: boolean
+    }
+}
+</code></pre>
+<h3 id="23-记录面试结果">2.3 记录面试结果</h3>
+<pre><code>POST /api/roll-call/interview-result
+
+请求参数：
+{
+    &quot;rollCallId&quot;: string,     // 点名记录ID
+    &quot;candidateId&quot;: string,    // 被点名人ID
+    &quot;interviewerId&quot;: string,  // 面试官ID
+    &quot;question&quot;: string,       // 面试题
+    &quot;result&quot;: boolean        // 答题结果（true: 会，false: 不会）
+}
+
+返回数据：
+{
+    &quot;code&quot;: number,
+    &quot;data&quot;: {
+        &quot;reward&quot;: {
+            &quot;interviewer&quot;: number,  // 面试官奖励
+            &quot;candidate&quot;: number     // 求职者奖励
+        }
+    }
+}
+</code></pre>
+<h2 id="3-历史记录接口">3. 历史记录接口</h2>
+<h3 id="31-获取点名历史">3.1 获取点名历史</h3>
+<pre><code>GET /api/roll-call/history
+
+请求参数：
+{
+    &quot;page&quot;: number,
+    &quot;pageSize&quot;: number,
+    &quot;startDate&quot;: string,    // 开始日期
+    &quot;endDate&quot;: string,      // 结束日期
+    &quot;userId&quot;: string        // 用户ID（可选）
+}
+
+返回数据：
+{
+    &quot;code&quot;: number,
+    &quot;data&quot;: {
+        &quot;total&quot;: number,
+        &quot;list&quot;: [{
+            &quot;id&quot;: string,
+            &quot;date&quot;: string,
+            &quot;candidate&quot;: {
+                &quot;id&quot;: string,
+                &quot;name&quot;: string
+            },
+            &quot;interviewers&quot;: [{
+                &quot;id&quot;: string,
+                &quot;name&quot;: string
+            }],
+            &quot;questions&quot;: [{
+                &quot;content&quot;: string,
+                &quot;result&quot;: boolean,
+                &quot;interviewer&quot;: {
+                    &quot;id&quot;: string,
+                    &quot;name&quot;: string
+                }
+            }]
+        }]
+    }
+}
+</code></pre>
+<h3 id="32-导出历史记录">3.2 导出历史记录</h3>
+<pre><code>GET /api/roll-call/history/export
+
+请求参数：
+{
+    &quot;startDate&quot;: string,    // 开始日期
+    &quot;endDate&quot;: string,      // 结束日期
+    &quot;userId&quot;: string        // 用户ID（可选）
+}
+
+返回数据：
+Excel文件流
+</code></pre>
+<h2 id="4-奖励相关接口">4. 奖励相关接口</h2>
+<h3 id="41-获取奖励排行榜">4.1 获取奖励排行榜</h3>
+<pre><code>GET /api/rewards/ranking
+
+请求参数：
+{
+    &quot;type&quot;: string,        // 类型：candidate（求职者）/ interviewer（面试官）
+    &quot;timeRange&quot;: string    // 时间范围：day/week/month/all
+}
+
+返回数据：
+{
+    &quot;code&quot;: number,
+    &quot;data&quot;: [{
+        &quot;id&quot;: string,
+        &quot;name&quot;: string,
+        &quot;totalReward&quot;: number,  // 总奖励金额
+        &quot;details&quot;: [{          // 奖励明细
+            &quot;date&quot;: string,
+            &quot;amount&quot;: number,
+            &quot;reason&quot;: string
+        }]
+    }]
+}
+</code></pre>
+<h2 id="5-统计分析接口">5. 统计分析接口</h2>
+<h3 id="51-获取面试题统计">5.1 获取面试题统计</h3>
+<pre><code>GET /api/statistics/questions
+
+请求参数：
+{
+    &quot;startDate&quot;: string,
+    &quot;endDate&quot;: string
+}
+
+返回数据：
+{
+    &quot;code&quot;: number,
+    &quot;data&quot;: {
+        &quot;totalQuestions&quot;: number,    // 总题目数
+        &quot;correctRate&quot;: number,       // 正确率
+        &quot;questionStats&quot;: [{          // 题目统计
+            &quot;content&quot;: string,
+            &quot;totalCount&quot;: number,
+            &quot;correctCount&quot;: number
+        }]
+    }
+}
+</code></pre>
+<h3 id="52-获取点名覆盖率">5.2 获取点名覆盖率</h3>
+<pre><code>GET /api/statistics/coverage
+
+请求参数：
+{
+    &quot;startDate&quot;: string,
+    &quot;endDate&quot;: string
+}
+
+返回数据：
+{
+    &quot;code&quot;: number,
+    &quot;data&quot;: {
+        &quot;totalUsers&quot;: number,        // 总用户数
+        &quot;coveredUsers&quot;: number,      // 已点名用户数
+        &quot;coverageRate&quot;: number,      // 覆盖率
+        &quot;uncoveredUsers&quot;: [{         // 未被点名用户
+            &quot;id&quot;: string,
+            &quot;name&quot;: string
+        }]
+    }
+}
+</code></pre>
+
+            
+            
+        </body>
+        </html>

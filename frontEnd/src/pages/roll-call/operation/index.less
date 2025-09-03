@@ -1,0 +1,42 @@
+.rollCallCard {
+  text-align: center;
+  padding: 24px;
+  background: #fafafa;
+
+  .studentCard {
+    margin-top: 24px;
+    width: 100%;
+    max-width: 600px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.interviewerCard {
+  background: #fafafa;
+  padding: 24px;
+
+  :global {
+    .ant-input-textarea {
+      margin: 16px 0;
+    }
+  }
+}
+
+.rankingCard {
+  :global {
+    .ant-card-body {
+      padding: 24px;
+    }
+
+    .ant-card {
+      transition: all 0.3s;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+    }
+  }
+}

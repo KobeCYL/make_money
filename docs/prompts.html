@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>&#x9879;&#x76ee;&#x6587;&#x6863;&#x63d0;&#x793a;&#x8bcd;&#x6a21;&#x677f;</title>
+            <style>
+/* From extension vscode.github */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+.vscode-dark img[src$=\#gh-light-mode-only],
+.vscode-light img[src$=\#gh-dark-mode-only],
+.vscode-high-contrast:not(.vscode-high-contrast-light) img[src$=\#gh-light-mode-only],
+.vscode-high-contrast-light img[src$=\#gh-dark-mode-only] {
+	display: none;
+}
+
+</style>
+            
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/markdown.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Microsoft/vscode/extensions/markdown-language-features/media/highlight.css">
+<style>
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+                font-size: 14px;
+                line-height: 1.6;
+            }
+        </style>
+        <style>
+.task-list-item {
+    list-style-type: none;
+}
+
+.task-list-item-checkbox {
+    margin-left: -20px;
+    vertical-align: middle;
+    pointer-events: none;
+}
+</style>
+<style>
+:root {
+  --color-note: #0969da;
+  --color-tip: #1a7f37;
+  --color-warning: #9a6700;
+  --color-severe: #bc4c00;
+  --color-caution: #d1242f;
+  --color-important: #8250df;
+}
+
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-note: #2f81f7;
+    --color-tip: #3fb950;
+    --color-warning: #d29922;
+    --color-severe: #db6d28;
+    --color-caution: #f85149;
+    --color-important: #a371f7;
+  }
+}
+
+</style>
+<style>
+.markdown-alert {
+  padding: 0.5rem 1rem;
+  margin-bottom: 16px;
+  color: inherit;
+  border-left: .25em solid #888;
+}
+
+.markdown-alert>:first-child {
+  margin-top: 0
+}
+
+.markdown-alert>:last-child {
+  margin-bottom: 0
+}
+
+.markdown-alert .markdown-alert-title {
+  display: flex;
+  font-weight: 500;
+  align-items: center;
+  line-height: 1
+}
+
+.markdown-alert .markdown-alert-title .octicon {
+  margin-right: 0.5rem;
+  display: inline-block;
+  overflow: visible !important;
+  vertical-align: text-bottom;
+  fill: currentColor;
+}
+
+.markdown-alert.markdown-alert-note {
+  border-left-color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-note .markdown-alert-title {
+  color: var(--color-note);
+}
+
+.markdown-alert.markdown-alert-important {
+  border-left-color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-important .markdown-alert-title {
+  color: var(--color-important);
+}
+
+.markdown-alert.markdown-alert-warning {
+  border-left-color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-warning .markdown-alert-title {
+  color: var(--color-warning);
+}
+
+.markdown-alert.markdown-alert-tip {
+  border-left-color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-tip .markdown-alert-title {
+  color: var(--color-tip);
+}
+
+.markdown-alert.markdown-alert-caution {
+  border-left-color: var(--color-caution);
+}
+
+.markdown-alert.markdown-alert-caution .markdown-alert-title {
+  color: var(--color-caution);
+}
+
+</style>
+        
+        </head>
+        <body class="vscode-body vscode-light">
+            <h1 id="项目文档提示词模板">项目文档提示词模板</h1>
+<h2 id="1-需求文档提示词">1. 需求文档提示词</h2>
+<pre><code>请为[项目名称]创建一个详细的需求文档，包含以下部分：
+
+1. 项目背景
+   - 项目目标和价值
+   - 核心业务规则
+   - 关键指标
+
+2. 业务目标
+   - 主要目标（3-5个）
+   - 次要目标
+   - 可衡量的成功标准
+
+3. 功能模块设计
+   对每个主要页面/模块：
+   - 功能描述
+   - 页面元素及交互逻辑
+     - 布局结构
+     - 核心组件
+     - 交互流程
+     - 状态管理
+   - 业务规则和约束
+   - 数据处理逻辑
+
+4. 用户故事
+   对每个主要功能：
+   - 角色定义
+   - 期望行为
+   - 验收标准
+   - 异常处理
+
+5. 测试用例
+   对每个核心功能：
+   - 前置条件
+   - 测试步骤
+   - 预期结果
+   - 边界条件测试
+
+6. 非功能需求
+   - 性能指标
+   - 安全要求
+   - 可用性要求
+   - 兼容性要求
+
+7. UI设计要求
+   - 整体布局
+   - 页面布局
+   - 交互设计
+   - 视觉规范
+     - 配色方案
+     - 字体规范
+     - 动效设计
+     - 响应式适配
+</code></pre>
+<h2 id="2-前端任务清单提示词">2. 前端任务清单提示词</h2>
+<pre><code>请为[项目名称]创建一个前端开发任务清单，包含以下部分：
+
+1. 基础架构搭建
+   - 技术栈选型
+   - 项目初始化
+   - 开发规范制定
+   - 基础组件搭建
+   - 路由配置
+   - 状态管理方案
+
+2. 页面开发任务
+   对每个页面模块：
+   - 组件设计和开发
+   - 状态管理实现
+   - API对接
+   - 交互实现
+   - 单元测试
+
+3. 公共功能开发
+   - 用户认证
+   - 权限控制
+   - 数据缓存
+   - 错误处理
+   - 日志记录
+
+4. UI/UX实现
+   - 组件样式开发
+   - 响应式适配
+   - 动画效果
+   - 主题定制
+
+5. 性能优化
+   - 代码分割
+   - 懒加载
+   - 缓存策略
+   - 打包优化
+
+6. 测试和部署
+   - 单元测试
+   - 集成测试
+   - 性能测试
+   - 部署流程
+</code></pre>
+<h2 id="3-后端api文档提示词">3. 后端API文档提示词</h2>
+<pre><code>请为[项目名称]创建一个后端API规范文档，包含以下部分：
+
+1. API概述
+   - 基础URL
+   - 认证方式
+   - 通用响应格式
+   - 错误码规范
+
+2. 接口定义
+   对每个API端点：
+   - 接口描述
+   - 请求方法
+   - 请求参数
+     - 路径参数
+     - 查询参数
+     - 请求体
+   - 响应格式
+     - 成功响应
+     - 错误响应
+   - 示例
+
+3. 数据模型
+   - 实体定义
+   - 字段说明
+   - 关联关系
+   - 验证规则
+
+4. 业务逻辑
+   - 处理流程
+   - 验证规则
+   - 权限控制
+   - 异常处理
+
+5. 性能考虑
+   - 缓存策略
+   - 并发处理
+   - 限流措施
+   - 超时处理
+</code></pre>
+<h2 id="4-ui设计文档提示词">4. UI设计文档提示词</h2>
+<pre><code>请为[项目名称]创建一个UI设计规范文档，包含以下部分：
+
+1. 设计系统
+   - 品牌规范
+   - 设计原则
+   - 组件库规范
+   - 布局系统
+
+2. 视觉规范
+   - 配色方案
+     - 主色调
+     - 辅助色
+     - 功能色
+   - 字体系统
+     - 字体家族
+     - 字号层级
+     - 行高规范
+   - 图标系统
+     - 图标尺寸
+     - 图标风格
+     - 使用规范
+
+3. 组件设计
+   - 基础组件
+     - 按钮
+     - 输入框
+     - 选择器
+     - 表格
+   - 业务组件
+     - 组件结构
+     - 交互规范
+     - 样式定义
+
+4. 交互设计
+   - 交互原则
+   - 状态反馈
+   - 动效规范
+   - 手势操作
+
+5. 响应式设计
+   - 断点设置
+   - 布局适配
+   - 内容响应
+   - 设备适配
+
+6. 无障碍设计
+   - 色彩对比
+   - 键盘操作
+   - 屏幕阅读
+   - 焦点管理
+</code></pre>
+<h2 id="使用说明">使用说明</h2>
+<ol>
+<li>根据项目具体需求，选择相应的提示词模板</li>
+<li>将[项目名称]替换为实际项目名称</li>
+<li>根据项目特点，适当调整或补充模板内容</li>
+<li>确保文档内容完整、规范、易于理解和维护</li>
+<li>建议结合项目实际情况，补充具体的示例和说明</li>
+</ol>
+
+            
+            
+        </body>
+        </html>
