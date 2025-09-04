@@ -47,6 +47,7 @@
     "@ant-design/plots": "^1.2.5",
     "@ant-design/pro-components": "^2.6.13",
     "@ant-design/use-emotion-css": "1.0.4",
+    "@faker-js/faker": "^10.0.0",
     "@types/numeral": "^2.0.5",
     "@umijs/route-utils": "^2.2.2",
     "antd": "^5.2.2",

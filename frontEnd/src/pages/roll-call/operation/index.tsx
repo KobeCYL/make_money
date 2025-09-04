@@ -1,9 +1,19 @@
 import { PageContainer } from '@ant-design/pro-components';
-import { Card, Row, Col, Button, Avatar, Space, Typography, Progress, Input, message } from 'antd';
-import { useState, useEffect } from 'react';
-import { createStyles } from 'antd-style';
+import { Card, Row, Col, Button, Avatar, Space, Typography, Progress, Input, message, Modal, List, Badge, Spin } from 'antd';
+import { useState, useEffect, useCallback } from 'react';
+import { createStyles, keyframes } from 'antd-style';
 import { request } from '@umijs/max';
+import { CheckOutlined, CloseOutlined, TrophyOutlined } from '@ant-design/icons';
 import { getStudents, getInterviewers, getRandomStudent, getRankingList } from '@/services/roll-call';
+
+// 抽奖动画
+const rollAnimation = keyframes`
+  0% { transform: scale(1); }
+  25% { transform: scale(1.1); }
+  50% { transform: scale(1); }
+  75% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+`;
 
 const useStyles = createStyles(({ token }) => ({
   interviewerListCard: {
@@ -55,7 +65,24 @@ const useStyles = createStyles(({ token }) => ({
     padding: '24px',
   },
   studentAvatar: {
-    border: `2px solid ${token.colorPrimary}`,
+    border: `3px solid #f5222d`, // 求职者红色边框
+    transition: 'all 0.3s',
+  },
+  interviewerAvatar: {
+    border: `3px solid #1890ff`, // 面试官蓝色边框
+    transition: 'all 0.3s',
+  },
+  rollButtonAnimated: {
+    animation: `${rollAnimation} 0.5s infinite`,
+  },
+  mainLayout: {
+    minHeight: 'calc(100vh - 200px)',
+  },
+  leftColumn: {
+    paddingRight: '12px',
+  },
+  rightColumn: {
+    paddingLeft: '12px',
   },
   rankingCard: {
     height: '100%',
@@ -148,6 +175,20 @@ interface Interviewer {
   successRate: number;
 }
 
+interface InterviewRecord {
+  interviewerId: string;
+  question: string;
+  result: 'success' | 'fail' | null;
+  reward: number;
+}
+
+interface StudentInterviewState {
+  studentId: string;
+  selectedInterviewers: Interviewer[];
+  interviewRecords: InterviewRecord[];
+  isCompleted: boolean;
+}
+
 const RollCallOperation: React.FC = () => {
   const { styles } = useStyles();
   
@@ -155,12 +196,21 @@ const RollCallOperation: React.FC = () => {
   const [isRolling, setIsRolling] = useState(false);
   const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
   const [activeStudentIndex, setActiveStudentIndex] = useState<number>(-1);
-  const [selectedInterviewer, setSelectedInterviewer] = useState<Interviewer | null>(null);
-  const [question, setQuestion] = useState('');
-  const [score, setScore] = useState<'success' | 'fail' | null>(null);
   const [progress, setProgress] = useState({ current: 0, total: 30 });
   const [interviewers, setInterviewers] = useState<Interviewer[]>([]);
   const [rankingList, setRankingList] = useState<Student[]>([]);
+  
+  // 面试官选择相关状态
+  const [showInterviewerModal, setShowInterviewerModal] = useState(false);
+  const [currentSelectingStudent, setCurrentSelectingStudent] = useState<Student | null>(null);
+  const [studentInterviewStates, setStudentInterviewStates] = useState<StudentInterviewState[]>([]);
+  
+  // 面试记录状态
+  const [activeInterviewerIndex, setActiveInterviewerIndex] = useState<number>(-1);
+  const [currentQuestion, setCurrentQuestion] = useState('');
+  
+  // 动画状态
+  const [showCelebration, setShowCelebration] = useState(false);
 
   // 获取面试官列表
   useEffect(() => {
@@ -188,7 +238,7 @@ const RollCallOperation: React.FC = () => {
     fetchRankingList();
   }, []);
 
-  // 随机选择学生
+  // 随机选择学生（带抽奖动画）
   const handleRollCall = async () => {
     if (progress.current >= progress.total) {
       message.warning('今日点名已完成');
@@ -196,11 +246,34 @@ const RollCallOperation: React.FC = () => {
     }
     
     setIsRolling(true);
+    setSelectedStudents([]);
+    setActiveStudentIndex(-1);
+    setStudentInterviewStates([]);
+    
     try {
+      // 3秒抽奖动画
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
       const { data } = await getRandomStudent();
-      setSelectedStudents(data);
-      setActiveStudentIndex(0); // 默认选中第一个学生
+      
+      // 逐个显示学生（每个间隔0.5秒）
+      for (let i = 0; i < data.length; i++) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        setSelectedStudents(prev => [...prev, data[i]]);
+      }
+      
+      // 初始化学生面试状态
+      const initialStates: StudentInterviewState[] = data.map(student => ({
+        studentId: student.id,
+        selectedInterviewers: [],
+        interviewRecords: [],
+        isCompleted: false
+      }));
+      setStudentInterviewStates(initialStates);
+      
+      setActiveStudentIndex(0);
       setProgress(prev => ({ ...prev, current: prev.current + 1 }));
+      message.success('点名完成！');
     } catch (error) {
       message.error('随机选择学生失败');
     } finally {
@@ -208,262 +281,411 @@ const RollCallOperation: React.FC = () => {
     }
   };
 
-  // 选择面试官
-  const handleSelectInterviewer = () => {
-    if (interviewers.length === 0) {
-      message.warning('暂无可用面试官');
-      return;
-    }
-    const randomIndex = Math.floor(Math.random() * interviewers.length);
-    setSelectedInterviewer(interviewers[randomIndex]);
+  // 打开面试官面试弹窗
+  const handleOpenInterviewerModal = (student: Student) => {
+    setCurrentSelectingStudent(student);
+    
+    // 智能选择5个面试官（按面试次数排序，选择前5个）
+    const sortedInterviewers = [...interviewers].sort((a, b) => a.interviewCount - b.interviewCount);
+    const selectedInterviewersList = sortedInterviewers.slice(0, 5);
+    
+    // 更新学生面试状态
+    setStudentInterviewStates(prev => 
+      prev.map(state => 
+        state.studentId === student.id
+          ? {
+              ...state,
+              selectedInterviewers: selectedInterviewersList,
+              interviewRecords: selectedInterviewersList.map(interviewer => ({
+                interviewerId: interviewer.id,
+                question: '',
+                result: null,
+                reward: 0
+              }))
+            }
+          : state
+      )
+    );
+    
+    setShowInterviewerModal(true);
   };
+  
+  // 关闭面试弹窗
+  const handleCloseInterviewerModal = () => {
+    setShowInterviewerModal(false);
+    setCurrentSelectingStudent(null);
+  };
+  
+  // 获取当前学生的面试状态
+  const getCurrentStudentState = useCallback((studentId: string) => {
+    return studentInterviewStates.find(state => state.studentId === studentId);
+  }, [studentInterviewStates]);
 
-  // 提交评分
-  const handleSubmitScore = async (result: 'success' | 'fail') => {
-    if (activeStudentIndex === -1 || !selectedStudents[activeStudentIndex] || !selectedInterviewer || !question) {
-      message.error('请完善面试信息');
+  // 提交评分（完整奖励计算）
+  const handleSubmitScore = async (studentId: string, interviewerIndex: number, result: 'success' | 'fail') => {
+    const studentState = getCurrentStudentState(studentId);
+    if (!studentState || !studentState.interviewRecords[interviewerIndex]) {
+      message.error('面试记录不存在');
       return;
     }
-
-    setScore(result);
+    
+    const record = studentState.interviewRecords[interviewerIndex];
+    if (!record.question.trim()) {
+      message.error('请先输入面试问题');
+      return;
+    }
+    
     try {
+      // 计算奖励：会-给求职者300元，不会-给面试官300元
+      const reward = 300;
+      const rewardRecipient = result === 'success' ? 'student' : 'interviewer';
+      
       await request<{ success: boolean }>('/api/roll-call/submit-result', {
         method: 'POST',
         data: {
-          studentId: selectedStudents[activeStudentIndex].id,
-          interviewerId: selectedInterviewer.id,
-          question,
+          studentId,
+          interviewerId: record.interviewerId,
+          question: record.question,
           result,
+          reward,
+          rewardRecipient,
           timestamp: Date.now(),
         },
       });
-      message.success('评分提交成功');
       
-      // 移动到下一个学生或重置状态
-      if (activeStudentIndex < selectedStudents.length - 1) {
-        setActiveStudentIndex(activeStudentIndex + 1);
-        setSelectedInterviewer(null);
-        setQuestion('');
-        setScore(null);
-      } else {
-        setSelectedStudents([]);
-        setActiveStudentIndex(-1);
-        setSelectedInterviewer(null);
-        setQuestion('');
-        setScore(null);
-      }
+      // 更新面试记录
+      setStudentInterviewStates(prev => 
+        prev.map(state => 
+          state.studentId === studentId
+            ? {
+                ...state,
+                interviewRecords: state.interviewRecords.map((rec, idx) => 
+                  idx === interviewerIndex
+                    ? { ...rec, result, reward }
+                    : rec
+                )
+              }
+            : state
+        )
+      );
+      
+      // 显示庆祝动画
+      setShowCelebration(true);
+      setTimeout(() => setShowCelebration(false), 2000);
+      
+      message.success(`评分提交成功！${rewardRecipient === 'student' ? '求职者' : '面试官'}获得${reward}元奖励`);
+      
+      // 刷新排行榜
+      const { data } = await getRankingList();
+      setRankingList(data);
+      
     } catch (error) {
       message.error('评分提交失败');
-      setScore(null);
     }
+  };
+  
+  // 更新面试问题
+  const handleQuestionChange = (studentId: string, interviewerIndex: number, question: string) => {
+    setStudentInterviewStates(prev => 
+      prev.map(state => 
+        state.studentId === studentId
+          ? {
+              ...state,
+              interviewRecords: state.interviewRecords.map((rec, idx) => 
+                idx === interviewerIndex
+                  ? { ...rec, question }
+                  : rec
+              )
+            }
+          : state
+      )
+    );
   };
 
   return (
-    <PageContainer>
-      <Card className={styles.mainCard}>
+    <PageContainer breadcrumb={false} style={{ padding: '24px 48px' }}>
+      <div className={styles.mainLayout} style={{ maxWidth: '1600px', margin: '0 auto' }}>
         <Row gutter={[24, 24]}>
-          {/* 随机点名区域 */}
-          <Col span={24}>
-            <Card className={styles.rollCallCard}>
-              <Space direction="vertical" size="large" style={{ width: '100%' }}>
-                <Row justify="center">
-                  <Col span={8}>
-                    <div className={styles.progressSection}>
-                      <Progress
-                        percent={(progress.current / progress.total) * 100}
-                        format={() => `${progress.current}/${progress.total}`}
-                        status={progress.current >= progress.total ? 'success' : 'active'}
-                      />
-                      <Button
-                        type="primary"
-                        size="large"
-                        loading={isRolling}
-                        onClick={handleRollCall}
-                        className={styles.rollButton}
-                      >
-                        {isRolling ? '随机选择中...' : '开始点名'}
-                      </Button>
-                    </div>
-                  </Col>
-                </Row>
-                
-                {selectedStudents.length > 0 && (
-                  <Space direction="vertical" size="large" style={{ width: '100%' }}>
-                    <Typography.Title level={4}>已选中的学生</Typography.Title>
-                    <Row gutter={[16, 16]} style={{ width: '100%' }}>
-                      {selectedStudents.map((student, index) => (
-                        <Col span={8} key={student.id} style={{ display: 'flex', justifyContent: 'center' }}>
-                          <Card 
-                            className={styles.studentCard} 
-                            bordered={false}
-                            style={{
-                              border: index === activeStudentIndex ? '2px solid #1890ff' : 'none',
-                              cursor: 'pointer'
-                            }}
-                            onClick={() => setActiveStudentIndex(index)}
-                          >
-                            <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-                              <Space align="center" size="middle">
-                                <Avatar
-                                  size={64}
-                                  src={student.avatar}
-                                  className={styles.studentAvatar}
-                                />
-                                <Space direction="vertical">
-                                  <Typography.Title level={4} style={{ margin: 0 }}>{student.name}</Typography.Title>
-                                  <Space size="small">
-                                    <Typography.Text>求职次数：{student.jobSeekingCount}</Typography.Text>
-                                    <Typography.Text>面试次数：{student.interviewCount}</Typography.Text>
-                                  </Space>
-                                </Space>
-                              </Space>
-                              <Button 
-                                type="primary" 
-                                block 
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleSelectInterviewer();
-                                }}
-                                disabled={selectedInterviewer !== null}
-                              >
-                                邀请面试官
-                              </Button>
-                            </Space>
-                          </Card>
-                        </Col>
-                      ))}
-                    </Row>
-                  </Space>
-                )}
-              </Space>
+          {/* 左栏：点名操作区域 */}
+          <Col span={18} className={styles.leftColumn}>
+            {/* 点名进度和操作区 */}
+            <Card className={styles.rollCallCard} style={{ marginBottom: '24px' }}>
+              <div className={styles.progressSection}>
+                <Typography.Title level={3} style={{ textAlign: 'center', marginBottom: '24px' }}>
+                  课程分享点名系统
+                </Typography.Title>
+                <Progress
+                  percent={(progress.current / progress.total) * 100}
+                  format={() => `已点名 ${progress.current}/${progress.total} 总人数 ${progress.total}`}
+                  status={progress.current >= progress.total ? 'success' : 'active'}
+                  strokeWidth={12}
+                  style={{ marginBottom: '32px' }}
+                />
+                <Button
+                  type="primary"
+                  size="large"
+                  loading={isRolling}
+                  onClick={handleRollCall}
+                  className={`${styles.rollButton} ${isRolling ? styles.rollButtonAnimated : ''}`}
+                  disabled={progress.current >= progress.total}
+                >
+                  {isRolling ? '随机选择中...' : '开始点名'}
+                </Button>
+              </div>
             </Card>
-          </Col>
-
-          {/* 面试官区域 */}
-          {selectedStudents[activeStudentIndex] && selectedInterviewer && (
-            <Col span={24}>
-              <Card className={styles.interviewerCard} title="当前面试">
-                <Row gutter={[24, 24]}>
-                  <Col span={8}>
-                    <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-                      <Space align="center" size="middle" style={{ width: '100%', justifyContent: 'center' }}>
-                        <Avatar
-                          size={80}
-                          src={selectedInterviewer.avatar}
-                          className={styles.interviewerAvatar}
-                        />
-                        <Space direction="vertical" size={4}>
-                          <Typography.Title level={3} style={{ margin: 0 }}>{selectedInterviewer.name}</Typography.Title>
-                          <Typography.Text type="secondary">{selectedInterviewer.title}</Typography.Text>
-                        </Space>
-                      </Space>
-                      <Card bordered={false} className={styles.scoreSection}>
-                        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-                          <Typography.Text strong>面试结果</Typography.Text>
-                          <Space size="middle" style={{ width: '100%', justifyContent: 'center' }}>
-                            <Button
-                              type="primary"
-                              size="large"
-                              icon={<span className="anticon">✓</span>}
-                              onClick={() => handleSubmitScore('success')}
-                              disabled={score !== null}
-                            >
-                              能力达标
-                            </Button>
-                            <Button
-                              danger
-                              size="large"
-                              icon={<span className="anticon">✗</span>}
-                              onClick={() => handleSubmitScore('fail')}
-                              disabled={score !== null}
-                            >
-                              需要提升
-                            </Button>
-                          </Space>
-                        </Space>
-                      </Card>
-                    </Space>
-                  </Col>
-                  <Col span={16}>
-                    <Card bordered={false} className={styles.questionSection}>
-                      <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-                        <Typography.Text strong>面试问题</Typography.Text>
-                        <Input.TextArea
-                          placeholder="请输入本次面试的问题内容..."
-                          value={question}
-                          onChange={(e) => setQuestion(e.target.value)}
-                          rows={4}
-                          className={styles.questionInput}
-                        />
-                      </Space>
-                    </Card>
-                  </Col>
-                </Row>
-              </Card>
-            </Col>
-          )}
-
-          {/* 已选择的面试官列表 */}
-          {selectedStudents.length > 0 && (
-            <Col span={24}>
-              <Card title="已选择的面试官" className={styles.interviewerListCard}>
+                
+            {/* 被点名学员展示区 */}
+            {selectedStudents.length > 0 && (
+              <Card title="今日被点名学员" style={{ marginBottom: '24px' }}>
                 <Row gutter={[16, 16]}>
-                  {interviewers.slice(0, 5).map((interviewer) => (
-                    <Col span={8} key={interviewer.id}>
-                      <Card 
-                        className={styles.interviewerItem} 
-                        bordered={false}
-                        style={{
-                          background: selectedInterviewer?.id === interviewer.id ? '#e6f7ff' : '#f5f5f5'
-                        }}
+                  {selectedStudents.map((student, index) => {
+                    const studentState = getCurrentStudentState(student.id);
+                    const hasSelectedInterviewers = studentState?.selectedInterviewers.length === 5;
+                    
+                    return (
+                      <Col span={8} key={student.id}>
+                        <Card 
+                          className={styles.studentCard}
+                          bordered={false}
+                          style={{
+                            border: index === activeStudentIndex ? '3px solid #1890ff' : '1px solid #f0f0f0',
+                            cursor: 'pointer'
+                          }}
+                        onClick={() => setActiveStudentIndex(index)}
                       >
-                        <Space align="center" size="small">
-                          <Avatar size={48} src={interviewer.avatar} />
-                          <Space direction="vertical" size={0}>
-                            <Typography.Text strong>{interviewer.name}</Typography.Text>
-                            <Typography.Text type="secondary" style={{ fontSize: '12px' }}>{interviewer.title}</Typography.Text>
-                            <Typography.Text type="secondary" style={{ fontSize: '12px' }}>成功率：{(interviewer.successRate * 100).toFixed(1)}%</Typography.Text>
+                        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+                          <Space align="center" size="middle">
+                            <Badge count={index + 1} color="#1890ff">
+                              <Avatar
+                                size={64}
+                                src={student.avatar}
+                                className={styles.studentAvatar}
+                              />
+                            </Badge>
+                            <Space direction="vertical" size={4}>
+                              <Typography.Title level={4} style={{ margin: 0 }}>{student.name}</Typography.Title>
+                              <Typography.Text type="secondary">求职次数：{student.jobSeekingCount}</Typography.Text>
+                              <Typography.Text type="secondary">面试次数：{student.interviewCount}</Typography.Text>
+                            </Space>
                           </Space>
+                          <Button 
+                            type={hasSelectedInterviewers ? "default" : "primary"}
+                            block 
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenInterviewerModal(student);
+                            }}
+                            disabled={hasSelectedInterviewers}
+                          >
+                            {hasSelectedInterviewers ? '已选择面试官' : '邀请面试官'}
+                          </Button>
                         </Space>
                       </Card>
                     </Col>
-                  ))}
-                </Row>
-              </Card>
-            </Col>
-          )}
-
-          {/* 奖励排行区域 */}
-          <Col span={24}>
-            <Card title="奖励排行榜" className={styles.rankingCard} bodyStyle={{ padding: '16px' }}>
-              <Row gutter={[16, 16]}>
-                {rankingList.map((student, index) => (
-                  <Col span={6} key={student.id}>
-                    <Card className={styles.rankItem} bordered={false} bodyStyle={{ padding: '16px' }}>
-                      <Space direction="horizontal" align="center" style={{ width: '100%', justifyContent: 'flex-start' }}>
-                        <div style={{ position: 'relative' }}>
-                          <Avatar size={48} src={student.avatar} />
-                          <div className={styles.rankNumber} style={{ position: 'absolute', bottom: -4, right: -4 }}>{index + 1}</div>
-                        </div>
-                        <Space direction="vertical" size={0}>
-                          <Typography.Text strong style={{ fontSize: '16px' }}>{student.name}</Typography.Text>
-                          <Typography.Text type="success" strong style={{ fontSize: '16px' }}>¥{student.earnings.toLocaleString()}</Typography.Text>
-                          <Space size={8}>
-                            <Typography.Text type="secondary" style={{ fontSize: '12px' }}>求职：{student.jobSeekingCount}次</Typography.Text>
-                            <Typography.Text type="secondary" style={{ fontSize: '12px' }}>面试：{student.interviewCount}次</Typography.Text>
-                          </Space>
-                        </Space>
-                      </Space>
-                    </Card>
-                  </Col>
-                ))}                
+                  );
+                })}
               </Row>
             </Card>
-          </Col>
-        </Row>
-      </Card>
+          )}
+          
+
+           </Col>
+           
+           {/* 右栏：奖金排行榜 */}
+           <Col span={6} className={styles.rightColumn}>
+             <Card 
+               title={
+                 <Space>
+                   <TrophyOutlined style={{ color: '#faad14' }} />
+                   <span>奖金排行榜</span>
+                 </Space>
+               }
+               className={styles.rankingCard}
+             >
+               <List
+                 dataSource={rankingList.slice(0, 10)}
+                 renderItem={(student, index) => (
+                   <List.Item className={styles.rankItem} style={{ padding: '12px', marginBottom: '8px' }}>
+                     <Space style={{ width: '100%' }} align="center">
+                       <div className={styles.rankNumber}>{index + 1}</div>
+                       <Avatar size={40} src={student.avatar} />
+                       <div style={{ flex: 1 }}>
+                         <Typography.Text strong style={{ display: 'block' }}>{student.name}</Typography.Text>
+                         <Typography.Text type="success" strong>¥{student.earnings.toLocaleString()}</Typography.Text>
+                         <div>
+                           <Typography.Text type="secondary" style={{ fontSize: '12px' }}>
+                             求职:{student.jobSeekingCount} 面试:{student.interviewCount}
+                           </Typography.Text>
+                         </div>
+                       </div>
+                     </Space>
+                   </List.Item>
+                 )}
+               />
+               
+               {/* 今日统计 */}
+               <div style={{ marginTop: '16px', padding: '16px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+                 <Typography.Title level={5}>今日奖金统计</Typography.Title>
+                 <Space direction="vertical" style={{ width: '100%' }}>
+                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                     <Typography.Text>求职者奖金：</Typography.Text>
+                     <Typography.Text type="success" strong>¥3,000</Typography.Text>
+                   </div>
+                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                     <Typography.Text>面试官奖金：</Typography.Text>
+                     <Typography.Text type="success" strong>¥1,500</Typography.Text>
+                   </div>
+                 </Space>
+               </div>
+               
+               {/* 本周统计 */}
+               <div style={{ marginTop: '16px', padding: '16px', backgroundColor: '#e6f7ff', borderRadius: '8px' }}>
+                 <Typography.Title level={5}>本周奖金统计</Typography.Title>
+                 <Space direction="vertical" style={{ width: '100%' }}>
+                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                     <Typography.Text>求职者奖金：</Typography.Text>
+                     <Typography.Text type="success" strong>¥9,000</Typography.Text>
+                   </div>
+                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                     <Typography.Text>面试官奖金：</Typography.Text>
+                     <Typography.Text type="success" strong>¥5,000</Typography.Text>
+                   </div>
+                 </Space>
+               </div>
+             </Card>
+           </Col>
+         </Row>
+       </div>
+       
+       {/* 面试官面试弹窗 */}
+        <Modal
+          title={`${currentSelectingStudent?.name} 的面试环节`}
+          open={showInterviewerModal}
+          onCancel={handleCloseInterviewerModal}
+          footer={null}
+          width={1200}
+          style={{ top: 20 }}
+        >
+          {currentSelectingStudent && (() => {
+            const studentState = getCurrentStudentState(currentSelectingStudent.id);
+            if (!studentState?.selectedInterviewers.length) return null;
+            
+            return (
+              <div>
+                <Typography.Text type="secondary" style={{ marginBottom: '16px', display: 'block' }}>
+                  系统已智能分配5位面试官，请依次进行面试
+                </Typography.Text>
+                
+                <Row gutter={[16, 16]}>
+                  {studentState.selectedInterviewers.map((interviewer, interviewerIndex) => {
+                    const record = studentState.interviewRecords[interviewerIndex];
+                    
+                    return (
+                      <Col span={12} key={interviewer.id}>
+                        <Card 
+                          size="small"
+                          title={
+                            <Space>
+                              <Avatar size={32} src={interviewer.avatar} className={styles.interviewerAvatar} />
+                              <span>{interviewer.name}</span>
+                              <Typography.Text type="secondary">({interviewer.title})</Typography.Text>
+                            </Space>
+                          }
+                          style={{ marginBottom: '16px' }}
+                        >
+                          <Space direction="vertical" style={{ width: '100%' }} size="middle">
+                            <div>
+                              <Typography.Text strong>面试问题：</Typography.Text>
+                              <Input.TextArea
+                                placeholder="请输入面试问题..."
+                                value={record.question}
+                                onChange={(e) => handleQuestionChange(currentSelectingStudent.id, interviewerIndex, e.target.value)}
+                                rows={3}
+                                disabled={record.result !== null}
+                                style={{ marginTop: '8px' }}
+                              />
+                            </div>
+                            
+                            <div>
+                              <Typography.Text strong>评分结果：</Typography.Text>
+                              <div style={{ marginTop: '8px' }}>
+                                <Space>
+                                  <Button
+                                    type={record.result === 'success' ? 'primary' : 'default'}
+                                    icon={<CheckOutlined />}
+                                    onClick={() => handleSubmitScore(currentSelectingStudent.id, interviewerIndex, 'success')}
+                                    disabled={record.result !== null || !record.question.trim()}
+                                    style={{ backgroundColor: record.result === 'success' ? '#52c41a' : undefined }}
+                                  >
+                                    会 (+300元给求职者)
+                                  </Button>
+                                  <Button
+                                    type={record.result === 'fail' ? 'primary' : 'default'}
+                                    danger={record.result === 'fail'}
+                                    icon={<CloseOutlined />}
+                                    onClick={() => handleSubmitScore(currentSelectingStudent.id, interviewerIndex, 'fail')}
+                                    disabled={record.result !== null || !record.question.trim()}
+                                  >
+                                    不会 (+300元给面试官)
+                                  </Button>
+                                </Space>
+                              </div>
+                              
+                              {record.result && (
+                                <div style={{ marginTop: '8px' }}>
+                                  <Typography.Text type="success">
+                                    已评分：{record.result === 'success' ? '能力达标' : '需要提升'}
+                                    （奖励：¥{record.reward}）
+                                  </Typography.Text>
+                                </div>
+                              )}
+                            </div>
+                          </Space>
+                        </Card>
+                      </Col>
+                    );
+                  })}
+                </Row>
+                
+                <div style={{ textAlign: 'center', marginTop: '24px' }}>
+                  <Button type="primary" onClick={handleCloseInterviewerModal}>
+                    完成面试
+                  </Button>
+                </div>
+              </div>
+            );
+          })()}
+        </Modal>
+       
+       {/* 庆祝动画 */}
+       {showCelebration && (
+         <div style={{
+           position: 'fixed',
+           top: 0,
+           left: 0,
+           right: 0,
+           bottom: 0,
+           background: 'rgba(0,0,0,0.5)',
+           display: 'flex',
+           justifyContent: 'center',
+           alignItems: 'center',
+           zIndex: 9999
+         }}>
+           <div style={{
+             background: 'white',
+             padding: '40px',
+             borderRadius: '16px',
+             textAlign: 'center',
+             animation: `${rollAnimation} 1s ease-in-out`
+           }}>
+             <Typography.Title level={2} style={{ color: '#52c41a', margin: 0 }}>🎉 评分成功！🎉</Typography.Title>
+           </div>
+         </div>
+       )}
     </PageContainer>
   );
 };
+
+
 
 export default RollCallOperation;

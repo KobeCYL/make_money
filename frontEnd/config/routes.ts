@@ -70,12 +70,7 @@ export default [
         path: '/roll-call/students',
         component: './roll-call/students',
       },
-      {
-        name: 'status',
-        icon: 'dashboard',
-        path: '/roll-call/status',
-        component: './roll-call/status',
-      },
+
     ],
   },
   {

@@ -127,6 +127,7 @@ export default {
         status: 'ok',
         type,
         currentAuthority: 'admin',
+        token: 'mock-admin-token-' + Date.now(),
       });
       access = 'admin';
       return;
@@ -136,6 +137,7 @@ export default {
         status: 'ok',
         type,
         currentAuthority: 'user',
+        token: 'mock-user-token-' + Date.now(),
       });
       access = 'user';
       return;
@@ -145,6 +147,7 @@ export default {
         status: 'ok',
         type,
         currentAuthority: 'admin',
+        token: 'mock-mobile-token-' + Date.now(),
       });
       access = 'admin';
       return;

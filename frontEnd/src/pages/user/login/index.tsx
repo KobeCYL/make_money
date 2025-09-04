@@ -140,9 +140,19 @@ const Login: React.FC = () => {
           defaultMessage: '登录成功！',
         });
         message.success(defaultLoginSuccessMessage);
+        
+        // 设置 token 到 localStorage
+        if (msg.token) {
+          localStorage.setItem('token', msg.token);
+        }
+        
         await fetchUserInfo();
         const urlParams = new URL(window.location.href).searchParams;
-        window.location.href = urlParams.get('redirect') || '/';
+        const redirectUrl = urlParams.get('redirect') || '/roll-call/operation';
+        
+        // 使用 history.push 而不是 window.location.href 避免页面重新加载
+        window.history.pushState(null, '', redirectUrl);
+        window.location.reload();
         return;
       }
       console.log(msg);

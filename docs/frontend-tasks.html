@@ -139,90 +139,365 @@
         </head>
         <body class="vscode-body vscode-light">
             <h1 id="前端开发任务清单">前端开发任务清单</h1>
-<h2 id="1-基础架构搭建">1. 基础架构搭建</h2>
-<h3 id="11-项目初始化">1.1 项目初始化</h3>
+<h2 id="开发优先级说明">开发优先级说明</h2>
+<p><strong>优先级1（最高）：点名页面核心功能</strong> - 系统最核心的业务功能<br>
+<strong>优先级2（高）：基础架构和公共组件</strong> - 支撑核心功能的基础设施<br>
+<strong>优先级3（中）：其他业务页面</strong> - 辅助功能页面<br>
+<strong>优先级4（低）：优化和扩展功能</strong> - 性能优化、测试、部署等</p>
+<hr>
+<h2 id="优先级1---最高点名页面核心功能开发">【优先级1 - 最高】点名页面核心功能开发</h2>
+<h3 id="11-点名页面基础架构">1.1 点名页面基础架构</h3>
 <ul class="contains-task-list">
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建项目基础结构</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 配置路由系统</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 配置状态管理（Redux）</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 设置全局样式和主题</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建点名页面基础结构（pages/RollCall/index.tsx）<strong>【已有基础实现】</strong></li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 优化现有页面布局结构</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现响应式布局适配（大屏双栏、小屏单栏）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发页面状态管理（点名流程状态）</li>
 </ul>
-<h3 id="12-公共组件开发">1.2 公共组件开发</h3>
+<h3 id="12-随机点名核心功能">1.2 随机点名核心功能</h3>
 <ul class="contains-task-list">
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发页面布局组件</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建导航菜单组件</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 完善随机点名算法（优先选择求职次数少的学员）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现近3天重复检查逻辑</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发抽奖动画效果（3秒动画、逐个显示）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加重新随机功能（重置按钮）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现点名结果确认机制</li>
 </ul>
-<h2 id="2-点名历史记录页面">2. 点名历史记录页面</h2>
-<h3 id="21-页面框架">2.1 页面框架</h3>
+<h3 id="13-面试官邀请系统">1.3 面试官邀请系统</h3>
 <ul class="contains-task-list">
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建页面基础结构</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现筛选器组件</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发历史记录列表组件</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 优化面试官选择算法（优先选择面试次数少的学员）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现面试官选择面板（弹窗形式）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加已选面试官限制逻辑（最多5位）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现面试官信息展示（头像、姓名、历史次数）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发面试官确认选择功能</li>
 </ul>
-<h3 id="22-功能实现">2.2 功能实现</h3>
+<h3 id="14-面试记录和评分">1.4 面试记录和评分</h3>
 <ul class="contains-task-list">
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 集成时间筛选功能</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现历史记录查询</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发被点名次数统计显示</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现数据导出功能</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 完善提问内容输入组件（实时保存）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 优化会/不会评分按钮（状态切换、锁定机制）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加评分结果确认功能</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现面试记录自动保存</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发面试进度跟踪</li>
 </ul>
-<h2 id="3-名单管理页面">3. 名单管理页面</h2>
-<h3 id="31-页面框架">3.1 页面框架</h3>
+<h3 id="15-奖励系统实现">1.5 奖励系统实现</h3>
 <ul class="contains-task-list">
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建页面基础结构</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发名单列表组件</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现导入功能UI</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 完善奖励计算逻辑（求职者1000元、面试官300元/题）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 优化奖金实时更新机制</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 完善奖金排行榜组件（总奖金、今日奖金、本周奖金）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加奖励发放动画效果</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现奖励统计功能</li>
 </ul>
-<h3 id="32-功能实现">3.2 功能实现</h3>
+<h3 id="16-关键交互优化">1.6 关键交互优化</h3>
 <ul class="contains-task-list">
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 集成Excel导入功能</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现名单CRUD操作</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发手动添加学员表单</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现批量导入错误处理</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现头像边框标识（求职者红色边框、面试官蓝色边框）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加自动滚动到面试官区域功能</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现按钮状态锁定机制（评分后不可更改）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发前三名特殊样式显示</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加操作确认对话框</li>
 </ul>
-<h2 id="4-点名页面">4. 点名页面</h2>
-<h3 id="41-页面框架">4.1 页面框架</h3>
+<h3 id="17-数据持久化和状态管理">1.7 数据持久化和状态管理</h3>
 <ul class="contains-task-list">
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建页面基础结构</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发点名进度展示组件</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现点名操作区域</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发面试记录区域</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建奖金排行榜组件</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现页面刷新后状态保持功能</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发断网时本地缓存机制</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现网络恢复后自动同步功能</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加操作撤销功能</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发实时保存机制（所有操作自动保存）</li>
 </ul>
-<h3 id="42-功能实现">4.2 功能实现</h3>
+<hr>
+<h2 id="优先级2---高基础架构和公共组件">【优先级2 - 高】基础架构和公共组件</h2>
+<h3 id="21-项目初始化">2.1 项目初始化</h3>
 <ul class="contains-task-list">
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现随机点名算法</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发面试官选择功能</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现答题情况记录</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 集成奖励计算逻辑</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发奖金排行展示</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 验证Ant Design Pro + UmiJS项目结构</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 配置TypeScript编译选项和类型声明</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 配置路由系统（基于config/routes.ts）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 配置状态管理（使用@umijs/max内置状态管理）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 设置全局样式和主题（基于defaultSettings.ts）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 配置开发环境代理（proxy.ts）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 设置ESLint + Prettier代码规范</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 配置Husky + Commitlint提交规范</li>
 </ul>
-<h2 id="5-面试题复盘页面">5. 面试题复盘页面</h2>
-<h3 id="51-页面框架">5.1 页面框架</h3>
+<h3 id="22-公共组件开发">2.2 公共组件开发</h3>
 <ul class="contains-task-list">
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建页面基础结构</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发面试题列表组件</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现数据筛选UI</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发响应式页面布局组件（支持折叠侧边栏）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建导航菜单组件（支持权限控制）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发通用数据表格组件（支持分页、筛选、导出）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建通用表单组件（支持验证、提交状态）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发通用模态框组件</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建加载状态组件（Loading、Skeleton）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发通用提示组件（Toast、Notification）</li>
 </ul>
-<h3 id="52-功能实现">5.2 功能实现</h3>
+<h3 id="23-ui布局系统开发">2.3 UI布局系统开发</h3>
 <ul class="contains-task-list">
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现面试题记录查询</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发答题情况统计</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 集成数据导出功能</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现响应式栅格系统（基于Ant Design Grid）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发断点管理系统（xs:480px, sm:576px, md:768px, lg:992px, xl:1200px）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建通用卡片布局组件（阴影、圆角、间距统一）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现双栏布局组件（左右分栏、可调整比例）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发单栏布局组件（移动端适配）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建固定头部布局组件</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现侧边栏布局组件（可折叠、固定定位）</li>
 </ul>
-<h2 id="6-系统优化">6. 系统优化</h2>
-<h3 id="61-性能优化">6.1 性能优化</h3>
+<hr>
+<h2 id="优先级3---中其他业务页面">【优先级3 - 中】其他业务页面</h2>
+<h3 id="31-点名历史记录页面">3.1 点名历史记录页面</h3>
+<h4 id="311-页面框架">3.1.1 页面框架</h4>
 <ul class="contains-task-list">
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现组件懒加载</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 优化数据缓存策略</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 优化页面加载性能</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建页面基础结构（pages/RollCallHistory/index.tsx）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现高级筛选器组件（日期范围、学员姓名、点名状态）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发历史记录列表组件（支持虚拟滚动优化性能）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建学员详情卡片组件</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发统计图表组件（点名频次分布图）</li>
 </ul>
-<h3 id="62-用户体验">6.2 用户体验</h3>
+<h4 id="312-ui布局设计">3.1.2 UI布局设计</h4>
 <ul class="contains-task-list">
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加必要的加载状态</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现错误处理和提示</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 优化表单验证体验</li>
-<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加操作引导提示</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现页面整体布局（顶部筛选区 + 主内容区）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发筛选器布局（水平排列，响应式折叠）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建列表区域布局（左侧列表 + 右侧详情，可切换单栏）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现统计面板布局（卡片式展示，网格排列）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发分页器布局（底部固定，居中对齐）</li>
+</ul>
+<h4 id="313-功能实现">3.1.3 功能实现</h4>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 集成时间筛选功能（支持快捷选择：今天、本周、本月）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现历史记录查询API集成</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发被点名次数统计显示（实时计算和缓存）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现数据导出功能（Excel格式，支持自定义字段）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加搜索功能（学员姓名模糊搜索）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现分页加载（支持无限滚动）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发数据可视化（统计图表展示）</li>
+</ul>
+<h3 id="32-名单管理页面">3.2 名单管理页面</h3>
+<h4 id="321-页面框架">3.2.1 页面框架</h4>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建页面基础结构（pages/StudentManagement/index.tsx）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发名单列表组件（支持排序、筛选、批量操作）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现导入功能UI（拖拽上传、进度显示）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建学员信息编辑表单组件</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发批量操作工具栏</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现学员头像上传组件</li>
+</ul>
+<h4 id="322-ui布局设计">3.2.2 UI布局设计</h4>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现页面整体布局（顶部操作栏 + 主表格区域）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发操作工具栏布局（左侧批量操作 + 右侧导入导出按钮）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建表格布局（固定表头、可调整列宽、行选择）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现编辑表单布局（模态框形式，分组展示）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发导入面板布局（拖拽区域 + 进度条 + 结果展示）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建学员卡片布局（头像 + 信息 + 操作按钮）</li>
+</ul>
+<h4 id="323-功能实现">3.2.3 功能实现</h4>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 集成Excel导入功能（支持模板下载、数据验证）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现名单CRUD操作（增删改查、批量删除）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发手动添加学员表单（表单验证、重复检查）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现批量导入错误处理（错误提示、数据修复）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加学员信息导出功能（Excel、PDF格式）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现学员状态管理（激活、禁用、归档）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发学员信息统计面板</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加操作日志记录功能</li>
+</ul>
+<h3 id="33-面试题复盘页面">3.3 面试题复盘页面</h3>
+<h4 id="331-页面框架">3.3.1 页面框架</h4>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建页面基础结构（pages/InterviewReview/index.tsx）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发面试题列表组件（支持分页、虚拟滚动）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现高级筛选UI（时间、学员、题目类型、答题结果）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建面试题详情卡片组件</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发统计图表组件（答题正确率、题目分类统计）</li>
+</ul>
+<h4 id="332-ui布局设计">3.3.2 UI布局设计</h4>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现页面整体布局（顶部筛选区 + 左侧列表 + 右侧详情）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发筛选器布局（多条件筛选，可折叠展开）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建面试题列表布局（卡片式展示，支持无限滚动）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现详情面板布局（题目内容 + 答题情况 + 统计信息）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发统计图表布局（多图表并排展示，响应式适配）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建面试题卡片布局（题目摘要 + 标签 + 状态指示器）</li>
+</ul>
+<h4 id="333-功能实现">3.3.3 功能实现</h4>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现面试题记录查询API集成</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发答题情况统计（正确率、难点分析）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 集成数据导出功能（Excel、PDF报告）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现面试题搜索功能（关键词、标签）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发面试题分类管理</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加面试题收藏功能</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现错题本功能</li>
+</ul>
+<h2 id="6-ui交互和动画效果">6. UI交互和动画效果</h2>
+<h3 id="61-点名页面动画">6.1 点名页面动画</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现随机点名抽奖动画（名字闪烁、选中放大）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发奖励发放动画（数字滚动、庆祝效果）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加排行榜更新动画（排名变化、位移过渡）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现按钮交互动画（悬停、点击波纹效果）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发学员卡片动画（阴影浮动、状态切换）</li>
+</ul>
+<h3 id="62-通用交互效果">6.2 通用交互效果</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现页面切换过渡动画</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发数据加载骨架屏</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加表单验证动画效果</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现模态框弹出动画</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发消息提示动画</li>
+</ul>
+<h3 id="64-特殊交互功能遗漏补充">6.4 特殊交互功能（遗漏补充）</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现头像边框标识（求职者红色边框、面试官蓝色边框）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发键盘快捷键支持</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加拖拽排序功能</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现批量操作支持</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发操作确认对话框</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加自动滚动到面试官区域功能</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现按钮状态锁定机制（评分后不可更改）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发前三名特殊样式显示</li>
+</ul>
+<h3 id="63-布局适配和视觉优化">6.3 布局适配和视觉优化</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现CSS Grid和Flexbox混合布局</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发主题色彩系统（#1890ff主色调 + 辅助色）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建统一的阴影和圆角规范</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现字体大小和行高规范（20px/16px/14px/12px）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发间距系统（8px基准，倍数递增）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建Z-index层级管理系统</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现暗色模式适配（可选功能）</li>
+</ul>
+<h2 id="7-系统优化">7. 系统优化</h2>
+<h3 id="71-性能优化">7.1 性能优化</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现路由级别的代码分割和懒加载</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 优化数据缓存策略（React Query/SWR）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现虚拟滚动优化长列表性能</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 优化图片加载（懒加载、WebP格式）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现组件级别的懒加载</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 优化打包体积（Tree Shaking、代码压缩）</li>
+</ul>
+<h3 id="711-性能指标达标遗漏补充">7.1.1 性能指标达标（遗漏补充）</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 确保页面加载时间不超过2秒</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 优化点名随机算法响应时间不超过1秒</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 支持30人以上名单管理的性能优化</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现性能监控和指标收集</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加性能预警机制</li>
+</ul>
+<h3 id="72-用户体验优化">7.2 用户体验优化</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加全局加载状态管理</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现统一错误处理和友好提示</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 优化表单验证体验（实时验证、错误提示）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加操作引导和帮助提示</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现离线状态检测和提示</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发快捷键支持</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加无障碍访问支持（ARIA标签）</li>
+</ul>
+<h3 id="73-安全和数据保护遗漏补充">7.3 安全和数据保护（遗漏补充）</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现学员数据保护机制</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加奖励发放记录留痕功能</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发数据加密传输</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现敏感信息脱敏显示</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加操作日志审计功能</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发数据备份和恢复机制</li>
+</ul>
+<h2 id="8-api集成和数据管理">8. API集成和数据管理</h2>
+<h3 id="81-api服务开发">8.1 API服务开发</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建统一的API请求封装（services/api.ts）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发学员管理API服务（增删改查、批量操作）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现点名相关API服务（随机点名、历史记录）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发面试记录API服务（提问记录、评分）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现奖励系统API服务（计算、排行榜）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加文件上传API服务（Excel导入、头像上传）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发数据导出API服务（Excel、PDF）</li>
+</ul>
+<h3 id="82-状态管理">8.2 状态管理</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 设计全局状态结构（用户信息、系统配置）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现学员数据状态管理</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发点名流程状态管理</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现面试记录状态管理</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加奖励系统状态管理</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发本地缓存策略</li>
+</ul>
+<h3 id="83-数据验证和处理">8.3 数据验证和处理</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现前端数据验证规则</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发数据格式化工具函数</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加数据同步机制</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现离线数据缓存</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发数据备份和恢复功能</li>
+</ul>
+<h2 id="9-测试和质量保证">9. 测试和质量保证</h2>
+<h3 id="91-单元测试">9.1 单元测试</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 配置Jest测试环境</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 编写工具函数单元测试</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发组件单元测试</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现API服务测试</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加状态管理测试</li>
+</ul>
+<h3 id="92-集成测试">9.2 集成测试</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发页面集成测试</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现用户流程测试</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加API集成测试</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发跨浏览器兼容性测试</li>
+</ul>
+<h3 id="93-端到端测试">9.3 端到端测试</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 配置E2E测试环境（Playwright/Cypress）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 编写关键用户流程测试</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现自动化回归测试</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加性能测试</li>
+</ul>
+<h2 id="10-部署和运维">10. 部署和运维</h2>
+<h3 id="101-构建优化">10.1 构建优化</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 配置生产环境构建</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 优化资源压缩和缓存策略</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现CDN资源配置</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加构建分析和监控</li>
+</ul>
+<h3 id="102-部署配置">10.2 部署配置</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 配置Docker容器化部署</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现CI/CD流水线</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加环境变量管理</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 配置域名和SSL证书</li>
+</ul>
+<h3 id="103-监控和维护">10.3 监控和维护</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 集成前端错误监控（Sentry）</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加性能监控和分析</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现用户行为统计</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发系统健康检查</li>
+</ul>
+<h2 id="11-文档和培训">11. 文档和培训</h2>
+<h3 id="111-技术文档">11.1 技术文档</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 编写组件使用文档</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建API接口文档</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发部署运维文档</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加故障排查指南</li>
+</ul>
+<h3 id="112-用户文档">11.2 用户文档</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 编写用户操作手册</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 创建功能介绍视频</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 开发在线帮助系统</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加常见问题解答</li>
+</ul>
+<h2 id="12-项目管理和协作">12. 项目管理和协作</h2>
+<h3 id="121-开发流程">12.1 开发流程</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 建立代码审查流程</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 配置自动化测试流程</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现版本发布管理</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加问题跟踪和管理</li>
+</ul>
+<h3 id="122-团队协作">12.2 团队协作</h3>
+<ul class="contains-task-list">
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 制定编码规范和最佳实践</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 建立技术分享机制</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 实现知识库管理</li>
+<li class="task-list-item enabled"><input class="task-list-item-checkbox"type="checkbox"> 添加团队沟通工具集成</li>
 </ul>
 
             
