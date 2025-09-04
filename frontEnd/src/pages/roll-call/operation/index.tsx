@@ -207,6 +207,7 @@ const RollCallOperation: React.FC = () => {
   
   // 面试记录状态
   const [activeInterviewerIndex, setActiveInterviewerIndex] = useState<number>(-1);
+  const [currentInterviewerIndex, setCurrentInterviewerIndex] = useState<number>(-1);
   const [currentQuestion, setCurrentQuestion] = useState('');
   
   // 动画状态
@@ -282,32 +283,38 @@ const RollCallOperation: React.FC = () => {
   };
 
   // 打开面试官面试弹窗
-  const handleOpenInterviewerModal = (student: Student) => {
+  const handleOpenInterviewerModal = async (student: Student) => {
     setCurrentSelectingStudent(student);
     
-    // 智能选择5个面试官（按面试次数排序，选择前5个）
-    const sortedInterviewers = [...interviewers].sort((a, b) => a.interviewCount - b.interviewCount);
-    const selectedInterviewersList = sortedInterviewers.slice(0, 5);
-    
-    // 更新学生面试状态
-    setStudentInterviewStates(prev => 
-      prev.map(state => 
-        state.studentId === student.id
-          ? {
-              ...state,
-              selectedInterviewers: selectedInterviewersList,
-              interviewRecords: selectedInterviewersList.map(interviewer => ({
-                interviewerId: interviewer.id,
-                question: '',
-                result: null,
-                reward: 0
-              }))
-            }
-          : state
-      )
-    );
-    
-    setShowInterviewerModal(true);
+    try {
+      // 从API获取5位面试官
+      const { data } = await request<{ data: Interviewer[] }>('/api/roll-call/random-interviewers', {
+        method: 'GET',
+        params: { count: 5 }
+      });
+      
+      // 更新学生面试状态
+      setStudentInterviewStates(prev => 
+        prev.map(state => 
+          state.studentId === student.id
+            ? {
+                ...state,
+                selectedInterviewers: data,
+                interviewRecords: data.map(interviewer => ({
+                  interviewerId: interviewer.id,
+                  question: '',
+                  result: null,
+                  reward: 0
+                }))
+              }
+            : state
+        )
+      );
+      
+      setShowInterviewerModal(true);
+    } catch (error) {
+      message.error('获取面试官失败');
+    }
   };
   
   // 关闭面试弹窗
@@ -320,7 +327,7 @@ const RollCallOperation: React.FC = () => {
   const getCurrentStudentState = useCallback((studentId: string) => {
     return studentInterviewStates.find(state => state.studentId === studentId);
   }, [studentInterviewStates]);
-
+const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'>('student');
   // 提交评分（完整奖励计算）
   const handleSubmitScore = async (studentId: string, interviewerIndex: number, result: 'success' | 'fail') => {
     const studentState = getCurrentStudentState(studentId);
@@ -338,8 +345,8 @@ const RollCallOperation: React.FC = () => {
     try {
       // 计算奖励：会-给求职者300元，不会-给面试官300元
       const reward = 300;
-      const rewardRecipient = result === 'success' ? 'student' : 'interviewer';
-      
+      const rewardRecipient1 = result === 'success' ? 'student' : 'interviewer';
+      setRewardRecipient(rewardRecipient1);
       await request<{ success: boolean }>('/api/roll-call/submit-result', {
         method: 'POST',
         data: {
@@ -348,7 +355,7 @@ const RollCallOperation: React.FC = () => {
           question: record.question,
           result,
           reward,
-          rewardRecipient,
+          rewardRecipient: rewardRecipient1,
           timestamp: Date.now(),
         },
       });
@@ -369,11 +376,14 @@ const RollCallOperation: React.FC = () => {
         )
       );
       
+      // 更新当前面试官索引
+      setCurrentInterviewerIndex(interviewerIndex);
+      
       // 显示庆祝动画
       setShowCelebration(true);
       setTimeout(() => setShowCelebration(false), 2000);
       
-      message.success(`评分提交成功！${rewardRecipient === 'student' ? '求职者' : '面试官'}获得${reward}元奖励`);
+      message.success(`${rewardRecipient === 'student' ? '求职者' : '面试官'}: ${rewardRecipient === 'student' ? currentSelectingStudent?.name : studentState.selectedInterviewers[currentInterviewerIndex].name}, 奖励300元`);
       
       // 刷新排行榜
       const { data } = await getRankingList();
@@ -403,17 +413,15 @@ const RollCallOperation: React.FC = () => {
   };
 
   return (
-    <PageContainer breadcrumb={false} style={{ padding: '24px 48px' }}>
+    <PageContainer breadcrumb={false} style={{ padding: '24px 48px' }} title="赚钱喽" subTitle="求职奖励1000元,面试回答,会奖励求职者,不会奖励面试者">
       <div className={styles.mainLayout} style={{ maxWidth: '1600px', margin: '0 auto' }}>
         <Row gutter={[24, 24]}>
           {/* 左栏：点名操作区域 */}
           <Col span={18} className={styles.leftColumn}>
             {/* 点名进度和操作区 */}
-            <Card className={styles.rollCallCard} style={{ marginBottom: '24px' }}>
+            {/* <Card className={styles.rollCallCard} style={{ marginBottom: '24px' }}> */}
               <div className={styles.progressSection}>
-                <Typography.Title level={3} style={{ textAlign: 'center', marginBottom: '24px' }}>
-                  课程分享点名系统
-                </Typography.Title>
+               
                 <Progress
                   percent={(progress.current / progress.total) * 100}
                   format={() => `已点名 ${progress.current}/${progress.total} 总人数 ${progress.total}`}
@@ -432,7 +440,7 @@ const RollCallOperation: React.FC = () => {
                   {isRolling ? '随机选择中...' : '开始点名'}
                 </Button>
               </div>
-            </Card>
+            {/* </Card> */}
                 
             {/* 被点名学员展示区 */}
             {selectedStudents.length > 0 && (
@@ -573,7 +581,7 @@ const RollCallOperation: React.FC = () => {
             return (
               <div>
                 <Typography.Text type="secondary" style={{ marginBottom: '16px', display: 'block' }}>
-                  系统已智能分配5位面试官，请依次进行面试
+                  系统已获取5位面试官，请依次进行面试
                 </Typography.Text>
                 
                 <Row gutter={[16, 16]}>
@@ -678,7 +686,7 @@ const RollCallOperation: React.FC = () => {
              textAlign: 'center',
              animation: `${rollAnimation} 1s ease-in-out`
            }}>
-             <Typography.Title level={2} style={{ color: '#52c41a', margin: 0 }}>🎉 评分成功！🎉</Typography.Title>
+             <Typography.Title level={2} style={{ color: '#52c41a', margin: 0 }}>🎉 {rewardRecipient === 'student' ? '求职者: ' : '面试官: '}{rewardRecipient === 'student' ? currentSelectingStudent?.name : getCurrentStudentState(currentSelectingStudent?.id)?.selectedInterviewers[currentInterviewerIndex]?.name}, 奖励300元 🎉</Typography.Title>
            </div>
          </div>
        )}

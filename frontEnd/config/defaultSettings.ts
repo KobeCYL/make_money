@@ -16,7 +16,7 @@ const Settings: ProLayoutProps & {
   fixSiderbar: true,
   colorWeak: false,
   title: '智能点名系统',
-  pwa: true,
+  pwa: false,
   logo: '/logo.svg',
   iconfontUrl: '',
   token: {

@@ -5,19 +5,21 @@ import defaultSettings from '../config/defaultSettings';
 const { pwa } = defaultSettings;
 const isHttps = document.location.protocol === 'https:';
 
-const clearCache = () => {
+const clearCache = async () => {
   // remove all caches
   if (window.caches) {
-    caches
-      .keys()
-      .then((keys) => {
-        keys.forEach((key) => {
-          caches.delete(key);
-        });
-      })
-      .catch((e) => console.log(e));
+    try {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(key => caches.delete(key)));
+      console.log('Cache cleared successfully');
+    } catch (e) {
+      console.error('Error clearing cache:', e);
+    }
   }
 };
+
+// Clear cache on application start
+clearCache();
 
 // if pwa is true
 if (pwa) {

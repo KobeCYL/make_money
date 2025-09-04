@@ -62,6 +62,19 @@ export const getInterviewers = (req: Request, res: Response) => {
   });
 };
 
+// 获取随机面试官
+export const getRandomInterviewers = (req: Request, res: Response) => {
+  const { count = 5 } = req.query;
+  const shuffled = [...interviewers].sort(() => 0.5 - Math.random());
+  const data = shuffled.slice(0, count as number);
+
+  res.json({
+    code: 200,
+    data,
+    success: true,
+  });
+};
+
 // 获取随机学生
 export const getRandomStudent = (req: Request, res: Response) => {
   const selectedStudents = [];

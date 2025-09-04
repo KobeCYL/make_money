@@ -53,49 +53,27 @@ export default [
         redirect: '/roll-call/operation',
       },
       {
-        name: 'operation',
+        // name: 'operation',
         icon: 'thunderbolt',
         path: '/roll-call/operation',
         component: './roll-call/operation',
       },
       {
-        name: 'history',
+        // name: 'history',
         icon: 'history',
         path: '/roll-call/history',
         component: './roll-call/history',
       },
       {
-        name: 'students',
-        icon: 'team',
+        // name: 'students',
+        icon: 'user',
         path: '/roll-call/students',
         component: './roll-call/students',
-      },
+      }
 
     ],
   },
-  {
-    path: '/account',
-    icon: 'user',
-    name: 'account',
-    routes: [
-      {
-        path: '/account',
-        redirect: '/account/center',
-      },
-      {
-        name: 'center',
-        icon: 'smile',
-        path: '/account/center',
-        component: './account/center',
-      },
-      {
-        name: 'settings',
-        icon: 'smile',
-        path: '/account/settings',
-        component: './account/settings',
-      },
-    ],
-  },
+  
   {
     path: '/',
     redirect: '/roll-call/operation',

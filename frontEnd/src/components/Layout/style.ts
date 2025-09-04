@@ -33,7 +33,7 @@ const useStyles = createStyles(({ token, css }) => ({
   content: {
     flex: 1,
     padding: token.paddingLG,
-    maxWidth: '1200px', // 设计文档中指定的大屏宽度
+    
     margin: '0 auto',
     width: '100%',
     '@media screen and (max-width: 992px)': {

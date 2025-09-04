@@ -147,7 +147,7 @@
 {
     &quot;page&quot;: number,       // 页码
     &quot;pageSize&quot;: number,  // 每页数量
-    &quot;keyword&quot;: string    // 搜索关键词（可选）
+    &quot;keyword&quot;: string    // 搜索关键词（可选，支持姓名和学号搜索）
 }
 
 返回数据：
@@ -156,24 +156,101 @@
     &quot;data&quot;: {
         &quot;total&quot;: number,  // 总数
         &quot;list&quot;: [{
-            &quot;id&quot;: string,
+            &quot;id&quot;: number,
             &quot;name&quot;: string,
+            &quot;student_id&quot;: string,    // 学号
+            &quot;is_active&quot;: boolean,    // 在校状态
+            &quot;created_at&quot;: string,    // 创建时间
             &quot;rollCallCount&quot;: number,  // 被点名次数
             &quot;lastRollCallTime&quot;: string // 上次被点名时间
         }]
     }
 }
 </code></pre>
-<h3 id="12-批量导入用户">1.2 批量导入用户</h3>
-<pre><code>POST /api/users/import
+<h3 id="12-创建用户">1.2 创建用户</h3>
+<pre><code>POST /api/users
 
 请求参数：
-FormData:
-- file: Excel文件
+{
+    &quot;name&quot;: string,       // 姓名
+    &quot;student_id&quot;: string, // 学号
+    &quot;is_active&quot;: boolean  // 在校状态
+}
 
 返回数据：
 {
     &quot;code&quot;: number,
+    &quot;message&quot;: string,
+    &quot;data&quot;: {
+        &quot;id&quot;: number,
+        &quot;name&quot;: string,
+        &quot;student_id&quot;: string,
+        &quot;is_active&quot;: boolean,
+        &quot;created_at&quot;: string
+    }
+}
+</code></pre>
+<h3 id="13-更新用户">1.3 更新用户</h3>
+<pre><code>PUT /api/users/:id
+
+请求参数：
+{
+    &quot;name&quot;: string,       // 姓名
+    &quot;student_id&quot;: string, // 学号
+    &quot;is_active&quot;: boolean  // 在校状态
+}
+
+返回数据：
+{
+    &quot;code&quot;: number,
+    &quot;message&quot;: string,
+    &quot;data&quot;: {
+        &quot;id&quot;: number,
+        &quot;name&quot;: string,
+        &quot;student_id&quot;: string,
+        &quot;is_active&quot;: boolean,
+        &quot;updated_at&quot;: string
+    }
+}
+</code></pre>
+<h3 id="14-删除用户">1.4 删除用户</h3>
+<pre><code>DELETE /api/users/:id
+
+返回数据：
+{
+    &quot;code&quot;: number,
+    &quot;message&quot;: string
+}
+</code></pre>
+<h3 id="15-批量删除用户">1.5 批量删除用户</h3>
+<pre><code>POST /api/users/batch-delete
+
+请求参数：
+{
+    &quot;ids&quot;: number[]  // 用户ID列表
+}
+
+返回数据：
+{
+    &quot;code&quot;: number,
+    &quot;message&quot;: string,
+    &quot;data&quot;: {
+        &quot;success&quot;: number,  // 成功删除数量
+        &quot;fail&quot;: number     // 失败数量
+    }
+}
+</code></pre>
+<h3 id="16-批量导入用户">1.6 批量导入用户</h3>
+<pre><code>POST /api/users/import
+
+请求参数：
+FormData:
+- file: Excel文件（支持.xlsx, .xls格式）
+
+返回数据：
+{
+    &quot;code&quot;: number,
+    &quot;message&quot;: string,
     &quot;data&quot;: {
         &quot;successCount&quot;: number,  // 成功导入数量
         &quot;failCount&quot;: number,    // 失败数量
@@ -184,192 +261,149 @@ FormData:
     }
 }
 </code></pre>
-<h2 id="2-点名相关接口">2. 点名相关接口</h2>
-<h3 id="21-执行随机点名">2.1 执行随机点名</h3>
-<pre><code>POST /api/roll-call/random
-
-请求参数：
-{
-    &quot;count&quot;: number      // 点名人数，默认3
-}
+<h3 id="17-导出用户">1.7 导出用户</h3>
+<pre><code>GET /api/users/export
 
 返回数据：
-{
-    &quot;code&quot;: number,
-    &quot;data&quot;: [{
-        &quot;id&quot;: string,
-        &quot;name&quot;: string,
-        &quot;rollCallCount&quot;: number
-    }]
-}
+Excel文件（.xlsx格式）
 </code></pre>
-<h3 id="22-记录面试官选择">2.2 记录面试官选择</h3>
-<pre><code>POST /api/roll-call/interviewers
+<pre><code>
+## 2. 点名相关接口
 
-请求参数：
-{
-    &quot;rollCallId&quot;: string,    // 点名记录ID
-    &quot;candidateId&quot;: string,   // 被点名人ID
-    &quot;interviewerIds&quot;: string[]  // 面试官ID列表
-}
-
-返回数据：
-{
-    &quot;code&quot;: number,
-    &quot;data&quot;: {
-        &quot;success&quot;: boolean
-    }
-}
+### 2.1 执行随机点名
 </code></pre>
-<h3 id="23-记录面试结果">2.3 记录面试结果</h3>
-<pre><code>POST /api/roll-call/interview-result
-
-请求参数：
-{
-    &quot;rollCallId&quot;: string,     // 点名记录ID
-    &quot;candidateId&quot;: string,    // 被点名人ID
-    &quot;interviewerId&quot;: string,  // 面试官ID
-    &quot;question&quot;: string,       // 面试题
-    &quot;result&quot;: boolean        // 答题结果（true: 会，false: 不会）
-}
-
-返回数据：
-{
-    &quot;code&quot;: number,
-    &quot;data&quot;: {
-        &quot;reward&quot;: {
-            &quot;interviewer&quot;: number,  // 面试官奖励
-            &quot;candidate&quot;: number     // 求职者奖励
-        }
-    }
-}
+<p>POST /api/roll-call/random</p>
+<p>请求参数：<br>
+{<br>
+&quot;count&quot;: number      // 点名人数，默认3<br>
+}</p>
+<p>返回数据：<br>
+{<br>
+&quot;code&quot;: number,<br>
+&quot;data&quot;: [{<br>
+&quot;id&quot;: string,<br>
+&quot;name&quot;: string,<br>
+&quot;rollCallCount&quot;: number<br>
+}]<br>
+}</p>
+<pre><code>
+### 2.2 记录面试官选择
 </code></pre>
-<h2 id="3-历史记录接口">3. 历史记录接口</h2>
-<h3 id="31-获取点名历史">3.1 获取点名历史</h3>
-<pre><code>GET /api/roll-call/history
-
-请求参数：
-{
-    &quot;page&quot;: number,
-    &quot;pageSize&quot;: number,
-    &quot;startDate&quot;: string,    // 开始日期
-    &quot;endDate&quot;: string,      // 结束日期
-    &quot;userId&quot;: string        // 用户ID（可选）
-}
-
-返回数据：
-{
-    &quot;code&quot;: number,
-    &quot;data&quot;: {
-        &quot;total&quot;: number,
-        &quot;list&quot;: [{
-            &quot;id&quot;: string,
-            &quot;date&quot;: string,
-            &quot;candidate&quot;: {
-                &quot;id&quot;: string,
-                &quot;name&quot;: string
-            },
-            &quot;interviewers&quot;: [{
-                &quot;id&quot;: string,
-                &quot;name&quot;: string
-            }],
-            &quot;questions&quot;: [{
-                &quot;content&quot;: string,
-                &quot;result&quot;: boolean,
-                &quot;interviewer&quot;: {
-                    &quot;id&quot;: string,
-                    &quot;name&quot;: string
-                }
-            }]
-        }]
-    }
-}
+<p>POST /api/roll-call/interviewers</p>
+<p>请求参数：<br>
+{<br>
+&quot;rollCallId&quot;: string,    // 点名记录ID<br>
+&quot;candidateId&quot;: string,   // 被点名人ID<br>
+&quot;interviewerIds&quot;: string[]  // 面试官ID列表<br>
+}</p>
+<p>返回数据：<br>
+{<br>
+&quot;code&quot;: number,<br>
+&quot;data&quot;: {<br>
+&quot;success&quot;: boolean<br>
+}<br>
+}</p>
+<pre><code>
+### 2.3 记录面试结果
 </code></pre>
-<h3 id="32-导出历史记录">3.2 导出历史记录</h3>
-<pre><code>GET /api/roll-call/history/export
+<p>POST /api/roll-call/interview-result</p>
+<p>请求参数：<br>
+{<br>
+&quot;rollCallId&quot;: string,     // 点名记录ID<br>
+&quot;candidateId&quot;: string,    // 被点名人ID<br>
+&quot;interviewerId&quot;: string,  // 面试官ID<br>
+&quot;question&quot;: string,       // 面试题<br>
+&quot;result&quot;: boolean        // 答题结果（true: 会，false: 不会）<br>
+}</p>
+<p>返回数据：<br>
+{<br>
+&quot;code&quot;: number,<br>
+&quot;data&quot;: {<br>
+&quot;reward&quot;: {<br>
+&quot;interviewer&quot;: number,  // 面试官奖励<br>
+&quot;candidate&quot;: number     // 求职者奖励<br>
+}<br>
+}<br>
+}</p>
+<pre><code>
+## 3. 历史记录接口
 
-请求参数：
-{
-    &quot;startDate&quot;: string,    // 开始日期
-    &quot;endDate&quot;: string,      // 结束日期
-    &quot;userId&quot;: string        // 用户ID（可选）
-}
-
-返回数据：
-Excel文件流
+### 3.1 获取点名历史
 </code></pre>
-<h2 id="4-奖励相关接口">4. 奖励相关接口</h2>
-<h3 id="41-获取奖励排行榜">4.1 获取奖励排行榜</h3>
-<pre><code>GET /api/rewards/ranking
-
-请求参数：
-{
-    &quot;type&quot;: string,        // 类型：candidate（求职者）/ interviewer（面试官）
-    &quot;timeRange&quot;: string    // 时间范围：day/week/month/all
-}
-
-返回数据：
-{
-    &quot;code&quot;: number,
-    &quot;data&quot;: [{
-        &quot;id&quot;: string,
-        &quot;name&quot;: string,
-        &quot;totalReward&quot;: number,  // 总奖励金额
-        &quot;details&quot;: [{          // 奖励明细
-            &quot;date&quot;: string,
-            &quot;amount&quot;: number,
-            &quot;reason&quot;: string
-        }]
-    }]
-}
+<p>GET /api/roll-call/history</p>
+<p>请求参数：<br>
+{<br>
+&quot;page&quot;: number,<br>
+&quot;pageSize&quot;: number,<br>
+&quot;startDate&quot;: string,    // 开始日期<br>
+&quot;endDate&quot;: string,      // 结束日期<br>
+&quot;userId&quot;: string        // 用户ID（可选）<br>
+}</p>
+<p>返回数据：<br>
+{<br>
+&quot;code&quot;: number,<br>
+&quot;data&quot;: {<br>
+&quot;total&quot;: number,<br>
+&quot;list&quot;: [{<br>
+&quot;id&quot;: string,<br>
+&quot;date&quot;: string,<br>
+&quot;candidate&quot;: {<br>
+&quot;id&quot;: string,<br>
+&quot;name&quot;: string<br>
+},<br>
+&quot;interviewers&quot;: [{<br>
+&quot;id&quot;: string,<br>
+&quot;name&quot;: string<br>
+}],<br>
+&quot;questions&quot;: [{<br>
+&quot;content&quot;: string,<br>
+&quot;result&quot;: boolean,<br>
+&quot;interviewer&quot;: {<br>
+&quot;id&quot;: string,<br>
+&quot;name&quot;: string<br>
+}<br>
+}]<br>
+}]<br>
+}<br>
+}</p>
+<pre><code>
+### 3.2 导出历史记录
 </code></pre>
-<h2 id="5-统计分析接口">5. 统计分析接口</h2>
-<h3 id="51-获取面试题统计">5.1 获取面试题统计</h3>
-<pre><code>GET /api/statistics/questions
+<p>GET /api/roll-call/history/export</p>
+<p>请求参数：<br>
+{<br>
+&quot;startDate&quot;: string,    // 开始日期<br>
+&quot;endDate&quot;: string,      // 结束日期<br>
+&quot;userId&quot;: string        // 用户ID（可选）<br>
+}</p>
+<p>返回数据：<br>
+Excel文件流</p>
+<pre><code>
+## 4. 奖励相关接口
 
-请求参数：
-{
-    &quot;startDate&quot;: string,
-    &quot;endDate&quot;: string
-}
-
-返回数据：
-{
-    &quot;code&quot;: number,
-    &quot;data&quot;: {
-        &quot;totalQuestions&quot;: number,    // 总题目数
-        &quot;correctRate&quot;: number,       // 正确率
-        &quot;questionStats&quot;: [{          // 题目统计
-            &quot;content&quot;: string,
-            &quot;totalCount&quot;: number,
-            &quot;correctCount&quot;: number
-        }]
-    }
-}
+### 4.1 获取奖励排行榜
 </code></pre>
-<h3 id="52-获取点名覆盖率">5.2 获取点名覆盖率</h3>
-<pre><code>GET /api/statistics/coverage
-
-请求参数：
-{
-    &quot;startDate&quot;: string,
-    &quot;endDate&quot;: string
-}
-
-返回数据：
-{
-    &quot;code&quot;: number,
-    &quot;data&quot;: {
-        &quot;totalUsers&quot;: number,        // 总用户数
-        &quot;coveredUsers&quot;: number,      // 已点名用户数
-        &quot;coverageRate&quot;: number,      // 覆盖率
-        &quot;uncoveredUsers&quot;: [{         // 未被点名用户
-            &quot;id&quot;: string,
-            &quot;name&quot;: string
-        }]
-    }
-}
-</code></pre>
+<p>GET /api/rewards/ranking</p>
+<p>请求参数：<br>
+{<br>
+&quot;type&quot;: string,        // 类型：candidate（求职者）/ interviewer（面试官）<br>
+&quot;timeRange&quot;: string    // 时间范围：day/week/month/all<br>
+}</p>
+<p>返回数据：<br>
+{<br>
+&quot;code&quot;: number,<br>
+&quot;data&quot;: [{<br>
+&quot;id&quot;: string,<br>
+&quot;name&quot;: string,<br>
+&quot;totalReward&quot;: number,  // 总奖励金额<br>
+&quot;details&quot;: [{          // 奖励明细<br>
+&quot;date&quot;: string,<br>
+&quot;amount&quot;: number,<br>
+&quot;reason&quot;: string<br>
+}]<br>
+}]<br>
+}</p>
+<pre><code></code></pre>
 
             
             

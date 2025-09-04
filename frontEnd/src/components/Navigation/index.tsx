@@ -15,41 +15,20 @@ const menuItems: MenuItem[] = [
   },
   {
     label: '点名操作',
-    key: '/roll-call',
+    key: '/roll-call/operation',
     icon: <CheckCircleOutlined />,
-    children: [
-      {
-        label: '点名',
-        key: '/roll-call/operation',
-      },
-      {
-        label: '历史记录',
-        key: '/roll-call/history',
-      },
-      {
-        label: '学生管理',
-        key: '/roll-call/students',
-      },
-      {
-        label: '状态统计',
-        key: '/roll-call/status',
-      },
-    ],
   },
   {
-    label: '个人中心',
-    key: '/account',
+    label: '面试历史',
+    key: '/roll-call/history',
+    icon: <HistoryOutlined />,
+
+  },
+   {
+    label: '学生管理',
+    key: '/roll-call/students',
     icon: <UserOutlined />,
-    children: [
-      {
-        label: '个人信息',
-        key: '/account/center',
-      },
-      {
-        label: '设置',
-        key: '/account/settings',
-      },
-    ],
+
   },
 ];
 
