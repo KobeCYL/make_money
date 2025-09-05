@@ -191,7 +191,7 @@ interface StudentInterviewState {
 
 const RollCallOperation: React.FC = () => {
   const { styles } = useStyles();
-  
+
   // 状态定义
   const [isRolling, setIsRolling] = useState(false);
   const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
@@ -199,17 +199,17 @@ const RollCallOperation: React.FC = () => {
   const [progress, setProgress] = useState({ current: 0, total: 30 });
   const [interviewers, setInterviewers] = useState<Interviewer[]>([]);
   const [rankingList, setRankingList] = useState<Student[]>([]);
-  
+
   // 面试官选择相关状态
   const [showInterviewerModal, setShowInterviewerModal] = useState(false);
   const [currentSelectingStudent, setCurrentSelectingStudent] = useState<Student | null>(null);
   const [studentInterviewStates, setStudentInterviewStates] = useState<StudentInterviewState[]>([]);
-  
+
   // 面试记录状态
   const [activeInterviewerIndex, setActiveInterviewerIndex] = useState<number>(-1);
   const [currentInterviewerIndex, setCurrentInterviewerIndex] = useState<number>(-1);
   const [currentQuestion, setCurrentQuestion] = useState('');
-  
+
   // 动画状态
   const [showCelebration, setShowCelebration] = useState(false);
 
@@ -245,24 +245,22 @@ const RollCallOperation: React.FC = () => {
       message.warning('今日点名已完成');
       return;
     }
-    
+
     setIsRolling(true);
     setSelectedStudents([]);
     setActiveStudentIndex(-1);
     setStudentInterviewStates([]);
-    
+
     try {
       // 3秒抽奖动画
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      
+
       const { data } = await getRandomStudent();
-      
+
       // 逐个显示学生（每个间隔0.5秒）
       for (let i = 0; i < data.length; i++) {
-        await new Promise(resolve => setTimeout(resolve, 500));
         setSelectedStudents(prev => [...prev, data[i]]);
       }
-      
+
       // 初始化学生面试状态
       const initialStates: StudentInterviewState[] = data.map(student => ({
         studentId: student.id,
@@ -271,7 +269,7 @@ const RollCallOperation: React.FC = () => {
         isCompleted: false
       }));
       setStudentInterviewStates(initialStates);
-      
+
       setActiveStudentIndex(0);
       setProgress(prev => ({ ...prev, current: prev.current + 1 }));
       message.success('点名完成！');
@@ -285,17 +283,17 @@ const RollCallOperation: React.FC = () => {
   // 打开面试官面试弹窗
   const handleOpenInterviewerModal = async (student: Student) => {
     setCurrentSelectingStudent(student);
-    
+
     try {
       // 从API获取5位面试官
       const { data } = await request<{ data: Interviewer[] }>('/api/roll-call/random-interviewers', {
         method: 'GET',
         params: { count: 5 }
       });
-      
+
       // 更新学生面试状态
-      setStudentInterviewStates(prev => 
-        prev.map(state => 
+      setStudentInterviewStates(prev =>
+        prev.map(state =>
           state.studentId === student.id
             ? {
                 ...state,
@@ -310,19 +308,19 @@ const RollCallOperation: React.FC = () => {
             : state
         )
       );
-      
+
       setShowInterviewerModal(true);
     } catch (error) {
       message.error('获取面试官失败');
     }
   };
-  
+
   // 关闭面试弹窗
   const handleCloseInterviewerModal = () => {
     setShowInterviewerModal(false);
     setCurrentSelectingStudent(null);
   };
-  
+
   // 获取当前学生的面试状态
   const getCurrentStudentState = useCallback((studentId: string) => {
     return studentInterviewStates.find(state => state.studentId === studentId);
@@ -335,13 +333,13 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
       message.error('面试记录不存在');
       return;
     }
-    
+
     const record = studentState.interviewRecords[interviewerIndex];
     if (!record.question.trim()) {
       message.error('请先输入面试问题');
       return;
     }
-    
+
     try {
       // 计算奖励：会-给求职者300元，不会-给面试官300元
       const reward = 300;
@@ -359,14 +357,14 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
           timestamp: Date.now(),
         },
       });
-      
+
       // 更新面试记录
-      setStudentInterviewStates(prev => 
-        prev.map(state => 
+      setStudentInterviewStates(prev =>
+        prev.map(state =>
           state.studentId === studentId
             ? {
                 ...state,
-                interviewRecords: state.interviewRecords.map((rec, idx) => 
+                interviewRecords: state.interviewRecords.map((rec, idx) =>
                   idx === interviewerIndex
                     ? { ...rec, result, reward }
                     : rec
@@ -375,33 +373,33 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
             : state
         )
       );
-      
+
       // 更新当前面试官索引
       setCurrentInterviewerIndex(interviewerIndex);
-      
+
       // 显示庆祝动画
       setShowCelebration(true);
       setTimeout(() => setShowCelebration(false), 2000);
-      
-      message.success(`${rewardRecipient === 'student' ? '求职者' : '面试官'}: ${rewardRecipient === 'student' ? currentSelectingStudent?.name : studentState.selectedInterviewers[currentInterviewerIndex].name}, 奖励300元`);
-      
+
+      // message.success(`${rewardRecipient === 'student' ? '求职者' : '面试官'}: ${rewardRecipient === 'student' ? currentSelectingStudent?.name : studentState.selectedInterviewers[currentInterviewerIndex].name}, 奖励300元`);
+
       // 刷新排行榜
       const { data } = await getRankingList();
       setRankingList(data);
-      
+
     } catch (error) {
       message.error('评分提交失败');
     }
   };
-  
+
   // 更新面试问题
   const handleQuestionChange = (studentId: string, interviewerIndex: number, question: string) => {
-    setStudentInterviewStates(prev => 
-      prev.map(state => 
+    setStudentInterviewStates(prev =>
+      prev.map(state =>
         state.studentId === studentId
           ? {
               ...state,
-              interviewRecords: state.interviewRecords.map((rec, idx) => 
+              interviewRecords: state.interviewRecords.map((rec, idx) =>
                 idx === interviewerIndex
                   ? { ...rec, question }
                   : rec
@@ -413,7 +411,7 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
   };
 
   return (
-    <PageContainer breadcrumb={false} style={{ padding: '24px 48px' }} title="赚钱喽" subTitle="求职奖励1000元,面试回答,会奖励求职者,不会奖励面试者">
+    <PageContainer breadcrumb={false} style={{ padding: '24px 48px' }} title="赚钱喽" subTitle="求职奖励1000元,面试过程中,会 => 奖励求职者:300元,不会 => 奖励面试者:300元">
       <div className={styles.mainLayout} style={{ maxWidth: '1600px', margin: '0 auto' }}>
         <Row gutter={[24, 24]}>
           {/* 左栏：点名操作区域 */}
@@ -421,7 +419,7 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
             {/* 点名进度和操作区 */}
             {/* <Card className={styles.rollCallCard} style={{ marginBottom: '24px' }}> */}
               <div className={styles.progressSection}>
-               
+
                 <Progress
                   percent={(progress.current / progress.total) * 100}
                   format={() => `已点名 ${progress.current}/${progress.total} 总人数 ${progress.total}`}
@@ -441,7 +439,7 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
                 </Button>
               </div>
             {/* </Card> */}
-                
+
             {/* 被点名学员展示区 */}
             {selectedStudents.length > 0 && (
               <Card title="今日被点名学员" style={{ marginBottom: '24px' }}>
@@ -449,10 +447,10 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
                   {selectedStudents.map((student, index) => {
                     const studentState = getCurrentStudentState(student.id);
                     const hasSelectedInterviewers = studentState?.selectedInterviewers.length === 5;
-                    
+
                     return (
                       <Col span={8} key={student.id}>
-                        <Card 
+                        <Card
                           className={styles.studentCard}
                           bordered={false}
                           style={{
@@ -476,9 +474,9 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
                               <Typography.Text type="secondary">面试次数：{student.interviewCount}</Typography.Text>
                             </Space>
                           </Space>
-                          <Button 
+                          <Button
                             type={hasSelectedInterviewers ? "default" : "primary"}
-                            block 
+                            block
                             onClick={(e) => {
                               e.stopPropagation();
                               handleOpenInterviewerModal(student);
@@ -495,13 +493,13 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
               </Row>
             </Card>
           )}
-          
+
 
            </Col>
-           
+
            {/* 右栏：奖金排行榜 */}
            <Col span={6} className={styles.rightColumn}>
-             <Card 
+             <Card
                title={
                  <Space>
                    <TrophyOutlined style={{ color: '#faad14' }} />
@@ -518,7 +516,7 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
                        <div className={styles.rankNumber}>{index + 1}</div>
                        <Avatar size={40} src={student.avatar} />
                        <div style={{ flex: 1 }}>
-                         <Typography.Text strong style={{ display: 'block' }}>{student.name}</Typography.Text>
+                         <Typography.Text strong style={{ display: 'block' }}>{index === 0 ? '[首富] ' : index === 1 ? '[土豪] ' : index === 2 ? '[乡绅] ' : ''} {student.name} </Typography.Text>
                          <Typography.Text type="success" strong>¥{student.earnings.toLocaleString()}</Typography.Text>
                          <div>
                            <Typography.Text type="secondary" style={{ fontSize: '12px' }}>
@@ -530,7 +528,7 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
                    </List.Item>
                  )}
                />
-               
+
                {/* 今日统计 */}
                <div style={{ marginTop: '16px', padding: '16px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
                  <Typography.Title level={5}>今日奖金统计</Typography.Title>
@@ -545,9 +543,9 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
                    </div>
                  </Space>
                </div>
-               
+
                {/* 本周统计 */}
-               <div style={{ marginTop: '16px', padding: '16px', backgroundColor: '#e6f7ff', borderRadius: '8px' }}>
+               {/* <div style={{ marginTop: '16px', padding: '16px', backgroundColor: '#e6f7ff', borderRadius: '8px' }}>
                  <Typography.Title level={5}>本周奖金统计</Typography.Title>
                  <Space direction="vertical" style={{ width: '100%' }}>
                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -559,12 +557,12 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
                      <Typography.Text type="success" strong>¥5,000</Typography.Text>
                    </div>
                  </Space>
-               </div>
+               </div> */}
              </Card>
            </Col>
          </Row>
        </div>
-       
+
        {/* 面试官面试弹窗 */}
         <Modal
           title={`${currentSelectingStudent?.name} 的面试环节`}
@@ -577,20 +575,20 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
           {currentSelectingStudent && (() => {
             const studentState = getCurrentStudentState(currentSelectingStudent.id);
             if (!studentState?.selectedInterviewers.length) return null;
-            
+
             return (
               <div>
                 <Typography.Text type="secondary" style={{ marginBottom: '16px', display: 'block' }}>
                   系统已获取5位面试官，请依次进行面试
                 </Typography.Text>
-                
+
                 <Row gutter={[16, 16]}>
                   {studentState.selectedInterviewers.map((interviewer, interviewerIndex) => {
                     const record = studentState.interviewRecords[interviewerIndex];
-                    
+
                     return (
                       <Col span={12} key={interviewer.id}>
-                        <Card 
+                        <Card
                           size="small"
                           title={
                             <Space>
@@ -613,7 +611,7 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
                                 style={{ marginTop: '8px' }}
                               />
                             </div>
-                            
+
                             <div>
                               <Typography.Text strong>评分结果：</Typography.Text>
                               <div style={{ marginTop: '8px' }}>
@@ -638,7 +636,7 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
                                   </Button>
                                 </Space>
                               </div>
-                              
+
                               {record.result && (
                                 <div style={{ marginTop: '8px' }}>
                                   <Typography.Text type="success">
@@ -654,7 +652,7 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
                     );
                   })}
                 </Row>
-                
+
                 <div style={{ textAlign: 'center', marginTop: '24px' }}>
                   <Button type="primary" onClick={handleCloseInterviewerModal}>
                     完成面试
@@ -664,7 +662,7 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
             );
           })()}
         </Modal>
-       
+
        {/* 庆祝动画 */}
        {showCelebration && (
          <div style={{
