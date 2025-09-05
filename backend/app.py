@@ -4,8 +4,8 @@ from routers.demo_routes import demo_dp
 app = Flask(__name__)
 
 
-app.register_blueprint(call_bp)
-app.register_blueprint(demo_dp)
+app.register_blueprint(call_bp, url_prefix='/api/call')
+app.register_blueprint(demo_dp, url_prefix='/api/demo')
 
 @app.errorhandler(404)
 def not_found(error):

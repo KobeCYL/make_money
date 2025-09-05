@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, jsonify, Blueprint
 import os
 
 
-demo_dp = Blueprint('demo', __name__, url_prefix='/demo')
+demo_dp = Blueprint('demo', __name__)
 
 
 
@@ -83,26 +83,7 @@ def currentUser():
                             'key': '0',
                             'label': '很有想法的',
                         },
-                        {
-                            'key': '1',
-                            'label': '专注设计',
-                        },
-                        {
-                            'key': '2',
-                            'label': '辣~',
-                        },
-                        {
-                            'key': '3',
-                            'label': '大长腿',
-                        },
-                        {
-                            'key': '4',
-                            'label': '川妹子',
-                        },
-                        {
-                            'key': '5',
-                            'label': '海纳百川',
-                        },
+                        
                     ],
                     'notifyCount': 12,
                     'unreadCount': 11,
