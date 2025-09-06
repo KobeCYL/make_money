@@ -49,10 +49,11 @@ export async function getInterviewers(params: PageParams) {
 }
 
 // 获取随机学生
-export async function getRandomStudent() {
+export async function getRandomStudent(params: { count: number }) {
   return request<{ data: Student[]; success: boolean }>('/api/roll-call/random-student', {
     method: 'GET',
-  });
+    params
+  })
 }
 
 // 获取排行榜数据

@@ -104,7 +104,7 @@ const StudentsManagement: React.FC = () => {
         pageSize: params.pageSize.toString(),
         ...(params.keyword && { keyword: params.keyword })
       });
-      const response = await fetch(`/api/users?${queryParams}`);
+      const response = await fetch(`/api/students?${queryParams}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -150,7 +150,7 @@ const StudentsManagement: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      const response = await fetch(`/api/users/${id}`, {
+      const response = await fetch(`/api/students/${id}`, {
         method: 'DELETE',
       });
       const result = await response.json();
@@ -168,7 +168,7 @@ const StudentsManagement: React.FC = () => {
 
   const handleSubmit = async (values: any) => {
     try {
-      const url = editingStudent ? `/api/users/${editingStudent.id}` : '/api/users';
+      const url = editingStudent ? `/api/students/${editingStudent.id}` : '/api/students';
       const method = editingStudent ? 'PUT' : 'POST';
       const response = await fetch(url, {
         method,
@@ -309,7 +309,7 @@ const StudentsManagement: React.FC = () => {
 
   const handleExport = async () => {
     try {
-      const response = await fetch('/api/users/export', {
+      const response = await fetch('/api/students/export', {
         method: 'GET',
       });
       const blob = await response.blob();
@@ -330,7 +330,7 @@ const StudentsManagement: React.FC = () => {
 
   const uploadProps: UploadProps = {
     name: 'file',
-    action: '/api/users/import',
+    action: '/api/students/import',
     accept: '.xlsx,.xls',
     showUploadList: false,
     onChange(info) {

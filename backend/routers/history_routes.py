@@ -5,7 +5,7 @@ history_bp = Blueprint('history', __name__)
 
 
 @history_bp.route('/history', methods=['GET'])
-def call():
+def history():
     return jsonify({
         'status': '200',
         'msg': 'history'

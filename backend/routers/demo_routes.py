@@ -3,13 +3,28 @@ from flask import Flask, render_template, request, jsonify, Blueprint
 import os
 
 
-demo_dp = Blueprint('demo', __name__)
+demo_dp = Blueprint('demo', __name__, url_prefix='/api')
+
+
+@demo_dp.route('/aa', methods=['GET'])
+def data():
+    try:
+
+        return jsonify({
+            'message': '添加数据成功',
+            'data': 1
+        }), 201
+       
+    except Exception as e:
+        print('e', e)
+        return jsonify({
+            "error": '报错了',
+            "message": e
+        }), 400
 
 
 
-
-
-@demo_dp.route('/api/data', methods=['POST'])
+@demo_dp.route('/data', methods=['POST'])
 def add_data():
     try:
 
@@ -34,9 +49,7 @@ def add_data():
             "message": e
         }), 400
 
-
-
-@demo_dp.route('/api/login/account', methods=['POST'])
+@demo_dp.route('/login/account', methods=['POST'])
 def login():
     try:
 
@@ -62,7 +75,7 @@ def login():
             "message": e
         }), 400
 
-@demo_dp.route('/api/currentUser', methods=['GET'])
+@demo_dp.route('/currentUser', methods=['GET'])
 def currentUser():
     try:
 

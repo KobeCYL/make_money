@@ -1,11 +1,13 @@
 from flask import Flask, jsonify
 from routers.call_routers import call_bp
 from routers.demo_routes import demo_dp
+from routers.student_model import students_bp
 app = Flask(__name__)
 
 
-app.register_blueprint(call_bp, url_prefix='/api/call')
-app.register_blueprint(demo_dp, url_prefix='/api/demo')
+app.register_blueprint(call_bp)
+app.register_blueprint(demo_dp)
+app.register_blueprint(students_bp)
 
 @app.errorhandler(404)
 def not_found(error):

@@ -213,18 +213,7 @@ const RollCallOperation: React.FC = () => {
   // 动画状态
   const [showCelebration, setShowCelebration] = useState(false);
 
-  // 获取面试官列表
-  useEffect(() => {
-    const fetchInterviewers = async () => {
-      try {
-        const { data } = await getInterviewers({ current: 1, pageSize: 10 });
-        setInterviewers(data);
-      } catch (error) {
-        message.error('获取面试官列表失败');
-      }
-    };
-    fetchInterviewers();
-  }, []);
+
 
   // 获取排行榜数据
   useEffect(() => {
@@ -254,7 +243,9 @@ const RollCallOperation: React.FC = () => {
     try {
       // 3秒抽奖动画
 
-      const { data } = await getRandomStudent();
+      const { data } = await getRandomStudent({
+        count: 3
+      });
 
       // 逐个显示学生（每个间隔0.5秒）
       for (let i = 0; i < data.length; i++) {
