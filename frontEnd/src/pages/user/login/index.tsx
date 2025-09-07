@@ -1,3 +1,6 @@
+import { Footer } from '@/components';
+import { login } from '@/services/ant-design-pro/api';
+import { getFakeCaptcha } from '@/services/ant-design-pro/login';
 import {
   AlipayCircleOutlined,
   LockOutlined,
@@ -12,25 +15,16 @@ import {
   ProFormCheckbox,
   ProFormText,
 } from '@ant-design/pro-components';
-import {
-  FormattedMessage,
-  Helmet,
-  SelectLang,
-  useIntl,
-  useModel,
-} from '@umijs/max';
-import { Alert, App, Tabs } from 'antd';
-import { createStyles } from 'antd-style';
+import { useEmotionCss } from '@ant-design/use-emotion-css';
+import { FormattedMessage, history, SelectLang, useIntl, useModel, Helmet } from '@umijs/max';
+import { Alert, message, Tabs } from 'antd';
+import Settings from '../../../../config/defaultSettings';
 import React, { useState } from 'react';
 import { flushSync } from 'react-dom';
-import { Footer } from '@/components';
-import { login } from '@/services/ant-design-pro/api';
-import { getFakeCaptcha } from '@/services/ant-design-pro/login';
-import Settings from '../../../../config/defaultSettings';
 
-const useStyles = createStyles(({ token }) => {
-  return {
-    action: {
+const ActionIcons = () => {
+  const langClassName = useEmotionCss(({ token }) => {
+    return {
       marginLeft: '8px',
       color: 'rgba(0, 0, 0, 0.2)',
       fontSize: '24px',
@@ -40,8 +34,21 @@ const useStyles = createStyles(({ token }) => {
       '&:hover': {
         color: token.colorPrimaryActive,
       },
-    },
-    lang: {
+    };
+  });
+
+  return (
+    <>
+      <AlipayCircleOutlined key="AlipayCircleOutlined" className={langClassName} />
+      <TaobaoCircleOutlined key="TaobaoCircleOutlined" className={langClassName} />
+      <WeiboCircleOutlined key="WeiboCircleOutlined" className={langClassName} />
+    </>
+  );
+};
+
+const Lang = () => {
+  const langClassName = useEmotionCss(({ token }) => {
+    return {
       width: 42,
       height: 42,
       lineHeight: '42px',
@@ -51,45 +58,11 @@ const useStyles = createStyles(({ token }) => {
       ':hover': {
         backgroundColor: token.colorBgTextHover,
       },
-    },
-    container: {
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100vh',
-      overflow: 'auto',
-      backgroundImage:
-        "url('https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/V-_oS6r-i7wAAAAAAAAAAAAAFl94AQBr')",
-      backgroundSize: '100% 100%',
-    },
-  };
-});
-
-const ActionIcons = () => {
-  const { styles } = useStyles();
+    };
+  });
 
   return (
-    <>
-      <AlipayCircleOutlined
-        key="AlipayCircleOutlined"
-        className={styles.action}
-      />
-      <TaobaoCircleOutlined
-        key="TaobaoCircleOutlined"
-        className={styles.action}
-      />
-      <WeiboCircleOutlined
-        key="WeiboCircleOutlined"
-        className={styles.action}
-      />
-    </>
-  );
-};
-
-const Lang = () => {
-  const { styles } = useStyles();
-
-  return (
-    <div className={styles.lang} data-lang>
+    <div className={langClassName} data-lang>
       {SelectLang && <SelectLang />}
     </div>
   );
@@ -114,8 +87,19 @@ const Login: React.FC = () => {
   const [userLoginState, setUserLoginState] = useState<API.LoginResult>({});
   const [type, setType] = useState<string>('account');
   const { initialState, setInitialState } = useModel('@@initialState');
-  const { styles } = useStyles();
-  const { message } = App.useApp();
+
+  const containerClassName = useEmotionCss(() => {
+    return {
+      display: 'flex',
+      flexDirection: 'column',
+      height: '100vh',
+      overflow: 'auto',
+      backgroundImage:
+        "url('https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/V-_oS6r-i7wAAAAAAAAAAAAAFl94AQBr')",
+      backgroundSize: '100% 100%',
+    };
+  });
+
   const intl = useIntl();
 
   const fetchUserInfo = async () => {
@@ -148,11 +132,7 @@ const Login: React.FC = () => {
         
         await fetchUserInfo();
         const urlParams = new URL(window.location.href).searchParams;
-        const redirectUrl = urlParams.get('redirect') || '/roll-call/operation';
-        
-        // 使用 history.push 而不是 window.location.href 避免页面重新加载
-        window.history.pushState(null, '', redirectUrl);
-        window.location.reload();
+        history.push(urlParams.get('redirect') || '/roll-call/operation');
         return;
       }
       console.log(msg);
@@ -170,14 +150,14 @@ const Login: React.FC = () => {
   const { status, type: loginType } = userLoginState;
 
   return (
-    <div className={styles.container}>
+    <div className={containerClassName}>
       <Helmet>
         <title>
           {intl.formatMessage({
             id: 'menu.login',
             defaultMessage: '登录页',
           })}
-          {Settings.title && ` - ${Settings.title}`}
+          - {Settings.title}
         </title>
       </Helmet>
       <Lang />
@@ -194,9 +174,7 @@ const Login: React.FC = () => {
           }}
           logo={<img alt="logo" src="/logo.svg" />}
           title="Ant Design"
-          subTitle={intl.formatMessage({
-            id: 'pages.layouts.userLayout.title',
-          })}
+          subTitle={intl.formatMessage({ id: 'pages.layouts.userLayout.title' })}
           initialValues={{
             autoLogin: true,
           }}
@@ -291,9 +269,7 @@ const Login: React.FC = () => {
             </>
           )}
 
-          {status === 'error' && loginType === 'mobile' && (
-            <LoginMessage content="验证码错误" />
-          )}
+          {status === 'error' && loginType === 'mobile' && <LoginMessage content="验证码错误" />}
           {type === 'mobile' && (
             <>
               <ProFormText
@@ -381,20 +357,14 @@ const Login: React.FC = () => {
             }}
           >
             <ProFormCheckbox noStyle name="autoLogin">
-              <FormattedMessage
-                id="pages.login.rememberMe"
-                defaultMessage="自动登录"
-              />
+              <FormattedMessage id="pages.login.rememberMe" defaultMessage="自动登录" />
             </ProFormCheckbox>
             <a
               style={{
                 float: 'right',
               }}
             >
-              <FormattedMessage
-                id="pages.login.forgotPassword"
-                defaultMessage="忘记密码"
-              />
+              <FormattedMessage id="pages.login.forgotPassword" defaultMessage="忘记密码" />
             </a>
           </div>
         </LoginForm>

@@ -8,7 +8,7 @@ def current_user():
     token = request.args.get('token')
     
     # 这里应该添加实际的用户验证逻辑
-    if token == '123':
+    if token:
         return jsonify({
             'success': True,
             'data': {
@@ -50,21 +50,14 @@ def current_user():
 @user_bp.route('/login/account', methods=['POST'])
 def login():
     data = request.get_json()
-    token = request.args.get('token')
     
-    # 这里应该添加实际的登录验证逻辑
-    if token == '123':
-        return jsonify({
-            'status': 'ok',
-            'type': 'account',
-            'currentAuthority': 'admin'
-        })
-    else:
-        return jsonify({
-            'status': 'error',
-            'type': 'account',
-            'currentAuthority': 'guest'
-        }), 401
+    # 这里应该添加实际的登录验证逻辑，现在任何账号密码都可以登录
+    return jsonify({
+        'status': 'ok',
+        'type': 'account',
+        'currentAuthority': 'admin',
+        'token': '123'  # 返回token给前端
+    })
 
 @user_bp.route('/user', methods=['GET'])
 def user():

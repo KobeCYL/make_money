@@ -25,11 +25,16 @@ export async function getInitialState(): Promise<{
 }> {
   const fetchUserInfo = async () => {
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No token found');
+      }
       const msg = await queryCurrentUser({
         skipErrorHandler: true,
+        params: { token },
       });
       return msg.data;
-    } catch (_error) {
+    } catch (error) {
       history.push(loginPath);
     }
     return undefined;
@@ -55,13 +60,17 @@ export async function getInitialState(): Promise<{
 }
 
 // 自定义布局配置
-export const layout: RunTimeLayoutConfig = () => {
+export const layout: RunTimeLayoutConfig = ({ initialState }) => {
   return {
     pure: true,
     onPageChange: () => {
       const { location } = history;
       // 如果没有登录，重定向到 login
-      if (location.pathname !== loginPath && !localStorage.getItem('token')) {
+      if (
+        !initialState?.currentUser &&
+        location.pathname !== loginPath &&
+        !location.pathname.startsWith('/user/')
+      ) {
         history.push(loginPath);
       }
     },
