@@ -1,9 +1,10 @@
 import random
-
+import copy
 from flask import Blueprint, request, jsonify, abort
 import json, time
-
-call_bp = Blueprint('call', __name__, url_prefix='/api/roll-call')
+from routers.history_routes import InterviewRecordManager
+from routers.student_model import StudentService
+call_bp = Blueprint('call', __name__)
 
 
 class JsonOptions:
@@ -31,7 +32,7 @@ name_path = 'data/students.json'
 lib_path = 'data/call.json'
 
 
-@call_bp.route('/', methods=['GET'])
+@call_bp.route('/api/roll-call', methods=['GET'])
 def call():
     return jsonify({
         'status': '200'
@@ -39,7 +40,7 @@ def call():
 
 
 # 获取随机面试官
-@call_bp.route('/random-interviewers', methods=['GET'])
+@call_bp.route('/api/roll-call/random-interviewers', methods=['GET'])
 def random_interviewers():
     lib = JsonOptions(lib_path)
     call_data = lib.get_json()
@@ -97,43 +98,47 @@ def random_interviewers():
 
 
 # 获取随机学生
-@call_bp.route('/random-student', methods=['GET'])
+@call_bp.route('/api/roll-call/random-student', methods=['GET'])
 def random_student():
-    count = request.args.get('count', default=1, type=int)  # 获取 count 参数，默认为1
-    lib = JsonOptions(lib_path)
-    call_data = lib.get_json()
-    call_history = call_data['call_history']
-
-    call_name_list = [item['name'] for item in call_history]
-
-    total_list = JsonOptions(name_path).get_json()
-    can_call_list = []
-    for item in total_list:
-        if item['name'] not in call_name_list:
-            can_call_list.append(item)
-
-    index_list = []
-    for i in range(count):
-        index = random.randint(0, len(can_call_list) - 1)
-        currentItem = can_call_list.pop(index)
-        currentItem["avatar"] = 'https://api.dicebear.com/7.x/avataaars/svg?seed=81cc91ea-1159-4a71-bfa6-5923f473fe37'
-        currentItem['jobSeekingCount'] = currentItem['applicant_count']
-        currentItem['interviewCount'] = currentItem['interviewer_count']
-        currentItem['id'] = currentItem['student_id']
-        index_list.append(currentItem)
-
-    call_history.extend([{
-        'id': item['id'],
-        'name': item['name'],
-        'time': time.time()
-    } for item in index_list])
-
-    # 保存表
-    lib.set_json({
-        'call_history': call_history,
-        'interview_history': call_data['interview_history']
-    })
     try:
+        count = request.args.get('count', default=1, type=int)  # 获取 count 参数，默认为1
+        lib = JsonOptions(lib_path)
+        call_data = lib.get_json()
+        call_history = call_data['call_history']
+
+        call_name_list = [item['name'] for item in call_history]
+
+        total_list = JsonOptions(name_path).get_json()
+        can_call_list = []
+        for item in total_list:
+            if item['name'] not in call_name_list:
+                can_call_list.append(item)
+
+        if len(can_call_list) == 0:
+            can_call_list = copy.deepcopy(total_list)
+            call_history = []
+        index_list = []
+        for i in range(count):
+
+            index = random.randint(0, len(can_call_list) - 1)
+            currentItem = can_call_list.pop(index)
+            currentItem["avatar"] = 'https://api.dicebear.com/7.x/avataaars/svg?seed=81cc91ea-1159-4a71-bfa6-5923f473fe37'
+            currentItem['jobSeekingCount'] = currentItem['applicant_count']
+            currentItem['interviewCount'] = currentItem['interviewer_count']
+            currentItem['id'] = currentItem['student_id']
+            index_list.append(currentItem)
+
+        call_history.extend([{
+            'id': item['id'],
+            'name': item['name'],
+            'time': time.time()
+        } for item in index_list])
+
+        # 保存表
+        lib.set_json({
+            'call_history': call_history,
+            'interview_history': call_data['interview_history']
+        })
         #  id: string;
         # name: string;
         # avatar: string;
@@ -145,14 +150,15 @@ def random_student():
             "data": index_list,
             "message": "ok"
         })
-    except:
+    except Exception as e:
+        print('e', e)
         return jsonify({
-            "error": '数据不对'
-        }), 400
+            "error": str(e),
+        }), 500
 
 
 # 获取获取学生状态
-@call_bp.route('/get-call-status', methods=['GET'])
+@call_bp.route('/api/roll-call/get-call-status', methods=['GET'])
 def get_call_status():
     total_list = JsonOptions(name_path).get_json()
     print('total_list', total_list)
@@ -174,7 +180,7 @@ def get_call_status():
 
 
 # 获取获取学生状态
-@call_bp.route('/save-interview-history', methods=['POST'])
+@call_bp.route('/api/roll-call/save-interview-history', methods=['POST'])
 def save_interview_history():
     data = request.get_data()
 
@@ -190,3 +196,37 @@ def save_interview_history():
             'interview_history': interview_history
         }
     })
+
+
+# 保存面试记录
+@call_bp.route('/api/roll-call/submit-result', methods=['POST'])
+def submit_result():
+    try:
+        data = request.get_json()
+        student_service = StudentService()
+        interviewer = student_service.get_student_by_id(data['interviewerId'])
+        
+        print('interviewer', interviewer)
+        candidate = student_service.get_student_by_id(data['studentId'])
+        record_manager = InterviewRecordManager()
+        record_manager.add_record({
+            "date": data['timestamp'],
+            "candidate": candidate.name,
+            "interviewer": interviewer.name,
+            "interviewerId": data['interviewerId'],
+            "question": data['question'],
+            "score_result": data['result'],
+            "reward_amount": data['reward'],
+        })
+
+        return jsonify({
+            'status': '200',
+            'data': record_manager.get_all_records()
+        })
+    except Exception as e:
+        return jsonify({
+            'status': '400',
+            'data': None,
+            'msg': f'error: {str(e)}'
+        }) , 500
+
