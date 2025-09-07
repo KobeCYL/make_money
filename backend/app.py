@@ -3,6 +3,7 @@ from routers.call_routers import call_bp
 from routers.demo_routes import demo_dp
 from routers.student_model import students_bp
 from routers.history_routes import history_bp
+from routers.user_routes import user_bp
 from flask_cors import CORS  # 导入 CORS
 app = Flask(__name__)
 
@@ -12,6 +13,7 @@ app.register_blueprint(call_bp)
 app.register_blueprint(demo_dp)
 app.register_blueprint(students_bp)
 app.register_blueprint(history_bp)
+app.register_blueprint(user_bp)
 
 @app.errorhandler(404)
 def not_found(error):
@@ -28,4 +30,4 @@ def server_error(error):
 
 
 if __name__ == '__main__':
-     app.run(debug=True)
+     app.run(host='0.0.0.0', debug=True)

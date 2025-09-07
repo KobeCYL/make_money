@@ -1,29 +1,41 @@
 # 使用Node.js作为基础镜像
-FROM node:18-alpine
+FROM node:18-alpine AS builder
 
 # 设置工作目录
 WORKDIR /app
 
-# 复制package.json和pnpm-lock.yaml
-COPY frontEnd/package.json frontEnd/pnpm-lock.yaml ./
+# 设置npm镜像源
+RUN npm config set registry https://registry.npmmirror.com
 
-# 安装pnpm
-RUN npm install -g pnpm
+# 复制package.json和lock文件
+COPY frontEnd/package.json ./
 
 # 安装依赖
-RUN pnpm install
+RUN npm install
 
-# 复制前端项目文件
-COPY frontEnd/ ./
+# 复制前端项目文件（排除node_modules）
+COPY frontEnd/src ./src
+COPY frontEnd/config ./config
+COPY frontEnd/public ./public
+COPY frontEnd/mock ./mock
+COPY frontEnd/tests ./tests
+COPY frontEnd/types ./types
+COPY frontEnd/.commitlintrc.js ./
+COPY frontEnd/.editorconfig ./
+COPY frontEnd/.lintstagedrc ./
+COPY frontEnd/.npmrc ./
+COPY frontEnd/biome.json ./
+COPY frontEnd/jest.config.ts ./
+COPY frontEnd/tsconfig.json ./
 
 # 构建项目
-RUN pnpm build
+RUN npm run build
 
 # 使用nginx作为生产环境服务器
 FROM nginx:alpine
 
 # 复制构建产物到nginx目录
-COPY --from=0 /app/dist /usr/share/nginx/html
+COPY --from=builder /app/dist /usr/share/nginx/html
 
 # 复制nginx配置文件
 COPY frontEnd/nginx.conf /etc/nginx/conf.d/default.conf
