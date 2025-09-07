@@ -1,10 +1,12 @@
 # student_info_management_system.py
+import copy
 import json
 import os
 import re
 from datetime import datetime
 from typing import List, Optional
 from flask import Flask, jsonify, request, Blueprint
+import traceback  # 添加这行导入
 
 students_bp = Blueprint('students', __name__, url_prefix='/')
 
@@ -745,6 +747,28 @@ def search_students_api():
             students_data = [student.to_dict() for student in students]
         return api_response(data=students_data)
     except Exception as e:
+        return api_response(500, f"服务器内部错误: {str(e)}")
+
+
+@students_bp.route('/api/students/refresh-data', methods=['GET'])
+def refresh_data():
+    """删除学生"""
+    try:
+        student_service = StudentService()
+        total_list = student_service.get_all_students()
+        new_list = copy.deepcopy(total_list)
+        for student in new_list:
+
+            student.funds = 0
+            student.interviewer_count = 0
+            student.applicant_count = 0
+            student_service.update_student(student)
+
+
+        return api_response(200, "刷成功")
+    except Exception as e:
+        error_traceback = traceback.format_exc()  # 获取完整的错误堆栈
+        print(f"Error occurred: {error_traceback}")  # 打印完整堆栈信息
         return api_response(500, f"服务器内部错误: {str(e)}")
 
 

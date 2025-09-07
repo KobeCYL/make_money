@@ -129,7 +129,6 @@ class InterviewRecordManager:
 
 
 # 创建全局记录管理器实例
-record_manager = InterviewRecordManager()
 
 
 def generate_test_data():
@@ -201,6 +200,8 @@ def health_check():
 def init_test_data():
     """初始化测试数据"""
     try:
+        record_manager = InterviewRecordManager()
+
         success = generate_test_data()
         if success:
             return jsonify({
@@ -218,6 +219,8 @@ def init_test_data():
 def get_all_records():
     """获取所有记录"""
     try:
+        record_manager = InterviewRecordManager()
+
         records = record_manager.get_all_records()
         return jsonify({
             'code': 200,
@@ -233,6 +236,8 @@ def get_all_records():
 def get_record(record_id):
     """根据ID获取记录"""
     try:
+        record_manager = InterviewRecordManager()
+
         record = record_manager.get_record_by_id(record_id)
         if record:
             return jsonify({'code': 200, 'message': '成功', 'data': record})
@@ -246,6 +251,8 @@ def get_record(record_id):
 def get_records_by_candidate(candidate_name):
     """根据求职者姓名获取记录"""
     try:
+        record_manager = InterviewRecordManager()
+
         records = record_manager.get_records_by_candidate(candidate_name)
         return jsonify({
             'code': 200,
@@ -261,6 +268,8 @@ def get_records_by_candidate(candidate_name):
 def get_records_by_interviewer(interviewer_name):
     """根据面试官姓名获取记录"""
     try:
+        record_manager = InterviewRecordManager()
+
         records = record_manager.get_records_by_interviewer(interviewer_name)
         return jsonify({
             'code': 200,
@@ -276,6 +285,8 @@ def get_records_by_interviewer(interviewer_name):
 def add_record():
     """添加新记录"""
     try:
+        record_manager = InterviewRecordManager()
+
         data = request.get_json()
         if not data:
             return jsonify({'code': 400, 'message': '请求体必须为JSON格式'}), 400
@@ -299,6 +310,8 @@ def add_record():
 def update_record(record_id):
     """更新记录"""
     try:
+        record_manager = InterviewRecordManager()
+
         data = request.get_json()
         if not data:
             return jsonify({'code': 400, 'message': '请求体必须为JSON格式'}), 400
@@ -320,6 +333,8 @@ def update_record(record_id):
 def delete_record(record_id):
     """删除记录"""
     try:
+        record_manager = InterviewRecordManager()
+
         success = record_manager.delete_record(record_id)
         if success:
             return jsonify({'code': 200, 'message': '记录删除成功'})
@@ -333,6 +348,8 @@ def delete_record(record_id):
 def search_records():
     """搜索记录"""
     try:
+        record_manager = InterviewRecordManager()
+
         data = request.get_json()
         if not data:
             return jsonify({'code': 400, 'message': '请求体必须为JSON格式'}), 400
