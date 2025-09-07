@@ -6,6 +6,8 @@ from datetime import datetime
 from typing import List, Optional
 from flask import Flask, jsonify, request, Blueprint
 
+students_bp = Blueprint('students', __name__, url_prefix='/')
+
 
 # ==================== Models ====================
 class Student:
@@ -140,32 +142,32 @@ def validate_student_data(student: Student) -> dict:
     if not student.name:
         return {'valid': False, 'message': '姓名不能为空'}
 
-    if not student.gender:
-        return {'valid': False, 'message': '性别不能为空'}
-
-    if student.gender not in ['男', '女']:
-        return {'valid': False, 'message': '性别只能是男或女'}
+    # if not student.gender:
+    #     return {'valid': False, 'message': '性别不能为空'}
+    #
+    # if student.gender not in ['男', '女']:
+    #     return {'valid': False, 'message': '性别只能是男或女'}
 
     # 验证学号格式（假设为数字）
     if not re.match(r'^\d+$', student.student_id):
         return {'valid': False, 'message': '学号只能包含数字'}
 
-    # 验证入学年份（如果有提供）
-    if student.enrollment_year is not None:
-        if not isinstance(student.enrollment_year, int):
-            return {'valid': False, 'message': '入学年份必须是整数'}
-
-        current_year = datetime.now().year
-        if student.enrollment_year < 1900 or student.enrollment_year > current_year:
-            return {'valid': False, 'message': f'入学年份应在1900-{current_year}之间'}
-
-    # 验证邮箱格式（如果有提供）
-    if student.email and not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', student.email):
-        return {'valid': False, 'message': '邮箱格式不正确'}
-
-    # 验证手机号格式（如果有提供）
-    if student.phone and not re.match(r'^1[3-9]\d{9}$', student.phone):
-        return {'valid': False, 'message': '手机号格式不正确'}
+    # # 验证入学年份（如果有提供）
+    # if student.enrollment_year is not None:
+    #     if not isinstance(student.enrollment_year, int):
+    #         return {'valid': False, 'message': '入学年份必须是整数'}
+    #
+    #     current_year = datetime.now().year
+    #     if student.enrollment_year < 1900 or student.enrollment_year > current_year:
+    #         return {'valid': False, 'message': f'入学年份应在1900-{current_year}之间'}
+    #
+    # # 验证邮箱格式（如果有提供）
+    # if student.email and not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', student.email):
+    #     return {'valid': False, 'message': '邮箱格式不正确'}
+    #
+    # # 验证手机号格式（如果有提供）
+    # if student.phone and not re.match(r'^1[3-9]\d{9}$', student.phone):
+    #     return {'valid': False, 'message': '手机号格式不正确'}
 
     # 验证面试官次数字段（如果有提供）
     if student.interviewer_count is not None:
@@ -200,15 +202,16 @@ class StudentService:
         """从文件加载学生数据"""
         if not os.path.exists(self.file_path):
             return []
-
         try:
             with open(self.file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-                students = []
+                students_list = []
+
                 for item in data:
                     student = Student.from_dict(item)
-                    students.append(student)
-                return students
+                    students_list.append(student)
+
+                return students_list
         except Exception as e:
             print(f"加载学生数据失败: {e}")
             return []
@@ -330,16 +333,23 @@ def add_student(service: StudentService):
     try:
         student_id = input("学号: ")
         name = input("姓名: ")
-        gender = input("性别 (男/女): ")
+        gender = input("性别 (男/女): ") or "男"
         birth_date = input("出生日期 (YYYY-MM-DD, 可选): ") or None
-        major = input("专业: ")
-        enrollment_year = int(input("入学年份: "))
+        major = input("专业: ") or "未知专业"
+        enrollment_input = input("入学年份: ")
+        enrollment_year = int(enrollment_input) if enrollment_input else 2020
         phone = input("电话 (可选): ") or None
         email = input("邮箱 (可选): ") or None
         address = input("地址 (可选): ") or None
-        interviewer_count = int(input("作为面试官次数 (默认0): ") or 0)
-        applicant_count = int(input("作为求职者次数 (默认0): ") or 0)
-        funds = float(input("资金 (默认0.0): ") or 0.0)
+
+        interviewer_input = input("作为面试官次数 (默认0): ")
+        interviewer_count = int(interviewer_input) if interviewer_input else 0
+
+        applicant_input = input("作为求职者次数 (默认0): ")
+        applicant_count = int(applicant_input) if applicant_input else 0
+
+        funds_input = input("资金 (默认0.0): ")
+        funds = float(funds_input) if funds_input else 0.0
 
         student = Student(
             student_id=student_id,
@@ -360,8 +370,8 @@ def add_student(service: StudentService):
             print("学生添加成功!")
         else:
             print("学生添加失败!")
-    except ValueError:
-        print("入学年份、面试官次数、求职者次数必须是数字!")
+    except ValueError as e:
+        print(f"输入数据格式错误: {e}")
     except Exception as e:
         print(f"添加学生时出错: {e}")
 
@@ -548,8 +558,7 @@ def cli_main():
 # ==================== Web API ====================
 # 创建Flask应用
 
-# 初始化学生服务
-student_service = StudentService()
+
 
 
 def api_response(code=200, message="success", data=None):
@@ -563,13 +572,13 @@ def api_response(code=200, message="success", data=None):
         response["data"] = data
     return jsonify(response)
 
-students_bp = Blueprint('students', __name__, url_prefix='/')
 
 # API路由
 @students_bp.route('/api/students', methods=['GET'])
 def get_all_students():
     """获取所有学生"""
     try:
+        student_service = StudentService()
         # 检查是否有排序参数
         sort_by = request.args.get('sort_by', '')  # funds
         order = request.args.get('order', 'desc')  # asc 或 desc
@@ -592,7 +601,7 @@ def get_student(student_id):
     try:
         # 检查是否有查询参数 detail=true
         detail = request.args.get('detail', 'false').lower() == 'true'
-
+        student_service = StudentService()
         student = student_service.get_student_by_id(student_id)
         if student:
             if detail:
@@ -611,6 +620,7 @@ def get_student(student_id):
 def get_students_sorted_by_funds():
     """按资金金额排序获取学生列表"""
     try:
+        student_service = StudentService()
         # 获取排序参数，默认降序
         order = request.args.get('order', 'desc')  # asc 或 desc
         ascending = order.lower() == 'asc'
@@ -635,6 +645,7 @@ def get_students_sorted_by_funds():
 def create_student():
     """创建学生"""
     try:
+        student_service = StudentService()
         data = request.get_json()
 
         # 创建学生对象，包含新字段
@@ -661,7 +672,7 @@ def create_student():
             response.status_code = 201
             return response
         else:
-            return api_response(400, "创建学生失败，学号可能已存在")
+            return api_response(400, "创建学生失败，学号可能已存在，或者信息有误")
     except Exception as e:
         return api_response(500, f"服务器内部错误: {str(e)}")
 
@@ -670,6 +681,7 @@ def create_student():
 def update_student_api(student_id):
     """更新学生信息"""
     try:
+        student_service = StudentService()
         data = request.get_json()
 
         # 创建学生对象，包含新字段
@@ -703,8 +715,10 @@ def update_student_api(student_id):
 def delete_student_api(student_id):
     """删除学生"""
     try:
+        student_service = StudentService()
         if student_service.delete_student(student_id):
             return api_response(message="学生删除成功")
+
         else:
             return api_response(200, "删除学生失败，学生可能不存在")
     except Exception as e:
@@ -715,6 +729,7 @@ def delete_student_api(student_id):
 def search_students_api():
     """搜索学生"""
     try:
+        student_service = StudentService()
         keyword = request.args.get('keyword', '')
         detail = request.args.get('detail', 'false').lower() == 'true'
 
@@ -740,7 +755,7 @@ def health_check():
 
 
 # 根路径
-@students_bp.route('/student')
+@students_bp.route('/')
 def index():
     """网站主页"""
     return api_response(message="欢迎使用学生信息管理系统API")
@@ -755,18 +770,3 @@ def not_found(error):
 @students_bp.errorhandler(500)
 def internal_error(error):
     return api_response(500, "服务器内部错误")
-
-
-def api_main():
-    """API主函数"""
-    # 确保data目录存在
-    if not os.path.exists('data'):
-        os.makedirs('data')
-
-    # 确保students.json文件存在
-    if not os.path.exists('data/students.json'):
-        with open('data/students.json', 'w', encoding='utf-8') as f:
-            f.write('[]')
-
-
-

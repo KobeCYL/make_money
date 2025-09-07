@@ -5,6 +5,7 @@ import { createStyles, keyframes } from 'antd-style';
 import { request } from '@umijs/max';
 import { CheckOutlined, CloseOutlined, TrophyOutlined } from '@ant-design/icons';
 import { getStudents, getInterviewers, getRandomStudent, getRankingList } from '@/services/roll-call';
+import { getApiRollCallRandomStudent } from '@/services/makeMoney/call';
 
 // 抽奖动画
 const rollAnimation = keyframes`
@@ -243,7 +244,7 @@ const RollCallOperation: React.FC = () => {
     try {
       // 3秒抽奖动画
 
-      const { data } = await getRandomStudent({
+      const { data } = await getApiRollCallRandomStudent({
         count: 3
       });
 

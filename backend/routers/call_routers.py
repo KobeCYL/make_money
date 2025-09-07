@@ -4,6 +4,7 @@ from flask import Blueprint, request, jsonify, abort
 import json, time
 from routers.history_routes import InterviewRecordManager
 from routers.student_model import StudentService
+
 call_bp = Blueprint('call', __name__)
 
 
@@ -114,25 +115,36 @@ def random_student():
             if item['name'] not in call_name_list:
                 can_call_list.append(item)
 
+
         if len(can_call_list) == 0:
             can_call_list = copy.deepcopy(total_list)
             call_history = []
+        new_call_list = []
+        if count > len(can_call_list):
+            gap = count - len(can_call_list)
+            for i in range(gap):
+                index = random.randint(0, len(call_name_list) - 1)
+                item  = call_history[index]
+                new_call_list.append(item)
+            can_call_list.extend(new_call_list)
         index_list = []
         for i in range(count):
-
             index = random.randint(0, len(can_call_list) - 1)
             currentItem = can_call_list.pop(index)
-            currentItem["avatar"] = 'https://api.dicebear.com/7.x/avataaars/svg?seed=81cc91ea-1159-4a71-bfa6-5923f473fe37'
+            currentItem[
+                "avatar"] = 'https://api.dicebear.com/7.x/avataaars/svg?seed=81cc91ea-1159-4a71-bfa6-5923f473fe37'
             currentItem['jobSeekingCount'] = currentItem['applicant_count']
             currentItem['interviewCount'] = currentItem['interviewer_count']
             currentItem['id'] = currentItem['student_id']
             index_list.append(currentItem)
-
-        call_history.extend([{
-            'id': item['id'],
-            'name': item['name'],
-            'time': time.time()
-        } for item in index_list])
+        if len(new_call_list) > 0:
+            call_history = new_call_list
+        else :
+            call_history.extend([{
+                'id': item['id'],
+                'name': item['name'],
+                'time': time.time()
+            } for item in index_list])
 
         # 保存表
         lib.set_json({
@@ -157,45 +169,34 @@ def random_student():
         }), 500
 
 
+
+
+
 # 获取获取学生状态
 @call_bp.route('/api/roll-call/get-call-status', methods=['GET'])
-def get_call_status():
-    total_list = JsonOptions(name_path).get_json()
-    print('total_list', total_list)
-
-    call_data = JsonOptions(lib_path).get_json()
-
-    call_history = call_data['call_history']
-
-    interview_history = call_data['interview_history']
-
-    return jsonify({
-        'status': '200',
-        'data': {
-            'total': total_list,
-            'call_history': call_history,
-            'interview_history': interview_history
-        }
-    })
-
-
-# 获取获取学生状态
-@call_bp.route('/api/roll-call/save-interview-history', methods=['POST'])
 def save_interview_history():
-    data = request.get_data()
+    try:
+        call_data = JsonOptions(lib_path).get_json()
 
-    call_data = JsonOptions(lib_path).get_json()
+        called_list = call_data['call_history']
 
-    interview_history = call_data['interview_history']
+        student_service = StudentService()
 
-    interview_history.concat(data)
+        total_list = student_service.get_all_students()
 
-    return jsonify({
-        'status': '200',
-        'data': {
-            'interview_history': interview_history
-        }
-    })
+        return jsonify({
+            'status': '200',
+            'data': {
+                "total": len(total_list),
+                'called_count': len(called_list)
+            }
+        })
+    except Exception as e:
+        return jsonify({
+            'status': '400',
+            'data': None,
+            'msg': f'error: {str(e)}'
+        }), 500
 
 
 # 保存面试记录
@@ -205,10 +206,23 @@ def submit_result():
         data = request.get_json()
         student_service = StudentService()
         interviewer = student_service.get_student_by_id(data['interviewerId'])
-        
+
         print('interviewer', interviewer)
         candidate = student_service.get_student_by_id(data['studentId'])
+        if candidate:
+            if data['result'] == 'success':
+                candidate.funds += int(data['reward'])
+            candidate.applicant_count += 1
+            student_service.update_student(candidate)
+
+        if interviewer:
+            if data['result'] != 'success':
+                interviewer.funds += int(data['reward'])
+            interviewer.interviewer_count += 1
+            student_service.update_student(interviewer)
+
         record_manager = InterviewRecordManager()
+
         record_manager.add_record({
             "date": data['timestamp'],
             "candidate": candidate.name,
@@ -228,5 +242,4 @@ def submit_result():
             'status': '400',
             'data': None,
             'msg': f'error: {str(e)}'
-        }) , 500
-
+        }), 500
