@@ -1,13 +1,13 @@
 declare namespace API {
-  type getApiRollCallRandomStudentParams = {
+  type getRollCallRandomInterviewersParams = {
     count?: number;
   };
 
-  type getApiStudentsSearchParams = {
+  type getRollCallRandomStudentParams = {
+    count?: number;
+  };
+
+  type getStudentsSearchParams = {
     keyword?: string;
-  };
-
-  type getRandomInterviewersParams = {
-    count?: number;
   };
 }

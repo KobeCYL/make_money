@@ -5,7 +5,8 @@ import { createStyles, keyframes } from 'antd-style';
 import { request } from '@umijs/max';
 import { CheckOutlined, CloseOutlined, TrophyOutlined } from '@ant-design/icons';
 import { getStudents, getInterviewers, getRandomStudent, getRankingList } from '@/services/roll-call';
-import { getApiRollCallRandomStudent } from '@/services/makeMoney/call';
+import { getRollCallGetCallStatus, getRollCallRandomStudent, postRollCallSubmitResult } from '@/services/makeMoney/call';
+import { getStudentsSortFunds } from '@/services/makeMoney/user';
 
 // 抽奖动画
 const rollAnimation = keyframes`
@@ -197,7 +198,7 @@ const RollCallOperation: React.FC = () => {
   const [isRolling, setIsRolling] = useState(false);
   const [selectedStudents, setSelectedStudents] = useState<Student[]>([]);
   const [activeStudentIndex, setActiveStudentIndex] = useState<number>(-1);
-  const [progress, setProgress] = useState({ current: 0, total: 30 });
+  const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [interviewers, setInterviewers] = useState<Interviewer[]>([]);
   const [rankingList, setRankingList] = useState<Student[]>([]);
 
@@ -214,41 +215,56 @@ const RollCallOperation: React.FC = () => {
   // 动画状态
   const [showCelebration, setShowCelebration] = useState(false);
 
+  const init = async () => {
+    const { data } = await getRollCallGetCallStatus();
+    setProgress({
+      current: data?.called_count || 0,
+      total: data?.total || 0,
+    });
 
+  }
 
   // 获取排行榜数据
   useEffect(() => {
     const fetchRankingList = async () => {
       try {
-        const { data } = await getRankingList();
-        setRankingList(data);
+        const { data } = await getStudentsSortFunds();
+        setRankingList(data?.map((item: any) => ({
+            id: item.student_id,
+            name:item.name,
+            avatar: item.id,
+            jobSeekingCount: item.applicant_count,
+            interviewCount: item.interviewer_count,
+            earnings: item.funds || 0,
+        })));
       } catch (error) {
         message.error('获取排行榜数据失败');
       }
     };
     fetchRankingList();
+
+    init()
   }, []);
 
+
   // 随机选择学生（带抽奖动画）
-  const handleRollCall = async () => {
+  const handleRollCall = async (count: number) => {
     if (progress.current >= progress.total) {
-      message.warning('今日点名已完成');
-      return;
+      message.warning('开始新的一轮点名');
     }
 
     setIsRolling(true);
-    setSelectedStudents([]);
     setActiveStudentIndex(-1);
     setStudentInterviewStates([]);
 
     try {
       // 3秒抽奖动画
 
-      const { data } = await getApiRollCallRandomStudent({
-        count: 3
+      const { data } = await getRollCallRandomStudent({
+        count: count
       });
 
-      // 逐个显示学生（每个间隔0.5秒）
+      // // 逐个显示学生（每个间隔0.5秒）
       for (let i = 0; i < data.length; i++) {
         setSelectedStudents(prev => [...prev, data[i]]);
       }
@@ -263,8 +279,7 @@ const RollCallOperation: React.FC = () => {
       setStudentInterviewStates(initialStates);
 
       setActiveStudentIndex(0);
-      setProgress(prev => ({ ...prev, current: prev.current + 1 }));
-      message.success('点名完成！');
+      init()
     } catch (error) {
       message.error('随机选择学生失败');
     } finally {
@@ -273,14 +288,14 @@ const RollCallOperation: React.FC = () => {
   };
 
   // 打开面试官面试弹窗
-  const handleOpenInterviewerModal = async (student: Student) => {
+  const handleOpenInterviewerModal = async ( count: number, student = currentSelectingStudent) => {
     setCurrentSelectingStudent(student);
 
     try {
       // 从API获取5位面试官
       const { data } = await request<{ data: Interviewer[] }>('/api/roll-call/random-interviewers', {
         method: 'GET',
-        params: { count: 5 }
+        params: { count }
       });
 
       // 更新学生面试状态
@@ -289,13 +304,13 @@ const RollCallOperation: React.FC = () => {
           state.studentId === student.id
             ? {
                 ...state,
-                selectedInterviewers: data,
-                interviewRecords: data.map(interviewer => ({
+                selectedInterviewers: [ ...state.selectedInterviewers ,...data],
+                interviewRecords: [...state.interviewRecords, ...data.map(interviewer => ({
                   interviewerId: interviewer.id,
                   question: '',
                   result: null,
                   reward: 0
-                }))
+                }))]
               }
             : state
         )
@@ -334,20 +349,17 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
 
     try {
       // 计算奖励：会-给求职者300元，不会-给面试官300元
-      const reward = 300;
+      const reward = '300';
       const rewardRecipient1 = result === 'success' ? 'student' : 'interviewer';
       setRewardRecipient(rewardRecipient1);
-      await request<{ success: boolean }>('/api/roll-call/submit-result', {
-        method: 'POST',
-        data: {
+      await postRollCallSubmitResult({
           studentId,
           interviewerId: record.interviewerId,
           question: record.question,
           result,
-          reward,
+          reward:reward,
           rewardRecipient: rewardRecipient1,
           timestamp: Date.now(),
-        },
       });
 
       // 更新面试记录
@@ -376,9 +388,15 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
       // message.success(`${rewardRecipient === 'student' ? '求职者' : '面试官'}: ${rewardRecipient === 'student' ? currentSelectingStudent?.name : studentState.selectedInterviewers[currentInterviewerIndex].name}, 奖励300元`);
 
       // 刷新排行榜
-      const { data } = await getRankingList();
-      setRankingList(data);
-
+      const { data } = await getStudentsSortFunds();
+      setRankingList(data?.map((item: any) => ({
+            id: item.student_id,
+            name:item.name,
+            avatar: item.id,
+            jobSeekingCount: item.applicant_count,
+            interviewCount: item.interviewer_count,
+            earnings: item.funds || 0,
+        })));
     } catch (error) {
       message.error('评分提交失败');
     }
@@ -419,16 +437,22 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
                   strokeWidth={12}
                   style={{ marginBottom: '32px' }}
                 />
+                <Space> <Button
+                  type="primary"
+                  size="large"
+                  onClick={() => handleRollCall(3)}
+                  // className={`${styles.rollButton} ${isRolling ? styles.rollButtonAnimated : ''}`}
+                >
+                  { '开始点名'}
+              </Button>
                 <Button
                   type="primary"
                   size="large"
-                  loading={isRolling}
-                  onClick={handleRollCall}
-                  className={`${styles.rollButton} ${isRolling ? styles.rollButtonAnimated : ''}`}
-                  disabled={progress.current >= progress.total}
+                  onClick={() => handleRollCall(1)  }
                 >
-                  {isRolling ? '随机选择中...' : '开始点名'}
-                </Button>
+                  {'加一个'}
+                </Button></Space>
+
               </div>
             {/* </Card> */}
 
@@ -471,7 +495,7 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
                             block
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleOpenInterviewerModal(student);
+                              handleOpenInterviewerModal( 5, student);
                             }}
                             disabled={hasSelectedInterviewers}
                           >
@@ -501,7 +525,7 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
                className={styles.rankingCard}
              >
                <List
-                 dataSource={rankingList.slice(0, 10)}
+                 dataSource={rankingList}
                  renderItem={(student, index) => (
                    <List.Item className={styles.rankItem} style={{ padding: '12px', marginBottom: '8px' }}>
                      <Space style={{ width: '100%' }} align="center">
@@ -519,10 +543,14 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
                      </Space>
                    </List.Item>
                  )}
+                 pagination={{
+                   pageSize: 10,
+                   showSizeChanger: true
+                 }}
                />
 
                {/* 今日统计 */}
-               <div style={{ marginTop: '16px', padding: '16px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
+               {/* <div style={{ marginTop: '16px', padding: '16px', backgroundColor: '#f5f5f5', borderRadius: '8px' }}>
                  <Typography.Title level={5}>今日奖金统计</Typography.Title>
                  <Space direction="vertical" style={{ width: '100%' }}>
                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -534,7 +562,7 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
                      <Typography.Text type="success" strong>¥1,500</Typography.Text>
                    </div>
                  </Space>
-               </div>
+               </div> */}
 
                {/* 本周统计 */}
                {/* <div style={{ marginTop: '16px', padding: '16px', backgroundColor: '#e6f7ff', borderRadius: '8px' }}>
@@ -648,6 +676,12 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
                 <div style={{ textAlign: 'center', marginTop: '24px' }}>
                   <Button type="primary" onClick={handleCloseInterviewerModal}>
                     完成面试
+                  </Button>
+                   <Button type="primary"   onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenInterviewerModal(1);
+                            }}>
+                    加一个
                   </Button>
                 </div>
               </div>

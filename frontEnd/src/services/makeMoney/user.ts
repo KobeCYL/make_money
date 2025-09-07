@@ -3,7 +3,7 @@
 import { request } from "@umijs/max";
 
 /** 获取所有学生信息接口 GET /api/students */
-export async function getApiStudents(options?: { [key: string]: any }) {
+export async function getStudents(options?: { [key: string]: any }) {
   return request<Record<string, any>>("/api/students", {
     method: "GET",
     ...(options || {}),
@@ -11,10 +11,7 @@ export async function getApiStudents(options?: { [key: string]: any }) {
 }
 
 /** 新增学生接口 POST /api/students */
-export async function postApiStudents(
-  body: {},
-  options?: { [key: string]: any }
-) {
+export async function postStudents(body: {}, options?: { [key: string]: any }) {
   return request<Record<string, any>>("/api/students", {
     method: "POST",
     headers: {
@@ -26,7 +23,7 @@ export async function postApiStudents(
 }
 
 /** 学生信息更新接口 PUT /api/students/2025001 */
-export async function putApiStudentsPinyin2025001(options?: {
+export async function putStudentsPinyin2025001(options?: {
   [key: string]: any;
 }) {
   return request<Record<string, any>>("/api/students/2025001", {
@@ -36,7 +33,7 @@ export async function putApiStudentsPinyin2025001(options?: {
 }
 
 /** 删除学生信息接口 DELETE /api/students/2025001 */
-export async function deleteApiStudentsPinyin2025001(options?: {
+export async function deleteStudentsPinyin2025001(options?: {
   [key: string]: any;
 }) {
   return request<Record<string, any>>("/api/students/2025001", {
@@ -46,12 +43,26 @@ export async function deleteApiStudentsPinyin2025001(options?: {
 }
 
 /** 按字段搜索接口 GET /api/students/search */
-export async function getApiStudentsSearch(
+export async function getStudentsSearch(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)
-  params: API.getApiStudentsSearchParams,
+  params: API.getStudentsSearchParams,
   options?: { [key: string]: any }
 ) {
-  return request<Record<string, any>>("/api/students/search", {
+  return request<{
+    code: number;
+    data: {
+      applicant_count?: number;
+      created_at?: string;
+      funds?: number;
+      id?: number;
+      interviewer_count?: number;
+      is_active?: boolean;
+      name?: string;
+      ranking?: number;
+      student_id?: string;
+    }[];
+    message: string;
+  }>("/api/students/search", {
     method: "GET",
     params: {
       ...params,
@@ -61,10 +72,22 @@ export async function getApiStudentsSearch(
 }
 
 /** 按资金升序排列接口 GET /api/students/sort/funds */
-export async function getApiStudentsSortFunds(options?: {
-  [key: string]: any;
-}) {
-  return request<Record<string, any>>("/api/students/sort/funds", {
+export async function getStudentsSortFunds(options?: { [key: string]: any }) {
+  return request<{
+    code?: number;
+    data?: {
+      applicant_count?: number;
+      created_at?: string;
+      funds?: number;
+      id?: number;
+      interviewer_count?: number;
+      is_active?: boolean;
+      name?: string;
+      ranking?: number;
+      student_id?: string;
+    }[];
+    message?: string;
+  }>("/api/students/sort/funds", {
     method: "GET",
     ...(options || {}),
   });
