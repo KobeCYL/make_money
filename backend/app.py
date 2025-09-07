@@ -3,8 +3,10 @@ from routers.call_routers import call_bp
 from routers.demo_routes import demo_dp
 from routers.student_model import students_bp
 from routers.history_routes import history_bp
+from flask_cors import CORS  # 导入 CORS
 app = Flask(__name__)
 
+CORS(app, resources={r"/*": {"origins": "*", "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]}})  # 启用 CORS，允许所有源和方法
 
 app.register_blueprint(call_bp)
 app.register_blueprint(demo_dp)

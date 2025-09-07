@@ -532,7 +532,7 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
                        <div className={styles.rankNumber}>{index + 1}</div>
                        <Avatar size={40} src={student.avatar} />
                        <div style={{ flex: 1 }}>
-                         <Typography.Text strong style={{ display: 'block' }}>{index === 0 ? '[首富] ' : index === 1 ? '[土豪] ' : index === 2 ? '[乡绅] ' : ''} {student.name} </Typography.Text>
+                         <Typography.Text strong style={{ display: 'block' }}>{index === 0 ? '[首富] ' : index === 1 ? '[土豪] ' : index === 2 ? '[地主] ' : '[贫民]'} {student.name} </Typography.Text>
                          <Typography.Text type="success" strong>¥{student.earnings.toLocaleString()}</Typography.Text>
                          <div>
                            <Typography.Text type="secondary" style={{ fontSize: '12px' }}>

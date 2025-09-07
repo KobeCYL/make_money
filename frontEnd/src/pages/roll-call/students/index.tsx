@@ -21,6 +21,14 @@ import {
   UploadOutlined,
   DownloadOutlined
 } from '@ant-design/icons';
+import { 
+  getStudents,
+  postStudents,
+  putStudentsPinyin2025001,
+  deleteStudentsPinyin2025001,
+  getStudentsSearch,
+  getStudentsSortFunds 
+} from '@/services/makeMoney/user';
 import type { UploadProps } from 'antd';
 import { PageContainer } from '@ant-design/pro-components';
 import type { ColumnsType } from 'antd/es/table';
@@ -31,8 +39,8 @@ interface Student {
   student_id: string;
   created_at: string;
   is_active: boolean;
-  rollCallCount: number;
-  lastRollCallTime: string | null;
+  interviewer_count: number;
+  applicant_count: string | null;
 }
 
 type StudentId = number;
@@ -99,34 +107,22 @@ const StudentsManagement: React.FC = () => {
     setLoading(true);
     setSelectedRowKeys([]);
     try {
-      const queryParams = new URLSearchParams({
-        page: params.page.toString(),
-        pageSize: params.pageSize.toString(),
-        ...(params.keyword && { keyword: params.keyword })
+      const response = await getStudents({
+        params: {
+          page: params.page,
+          pageSize: params.pageSize,
+          keyword: params.keyword
+        }
       });
-      const response = await fetch(`/api/students?${queryParams}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const result = await response.json();
-      if (result.code === 200) {
-        const mappedStudents = result.data.list.map((user: any) => ({
-          id: user.id,
-          name: user.name,
-          student_id: user.student_id,
-          created_at: user.created_at,
-          is_active: user.is_active,
-          rollCallCount: user.rollCallCount,
-          lastRollCallTime: user.lastRollCallTime
-        }));
-        setStudents(mappedStudents);
+      if (response.code === 200 && response.data) {
+        setStudents(response.data);
         setPagination({
           ...pagination,
           current: params.page,
-          total: result.data.total
+          total: response.data.length
         });
       } else {
-        throw new Error(result.message || '获取学生列表失败');
+        throw new Error(response.message || '获取学生列表失败');
       }
     } catch (error) {
       console.error('加载学生列表失败:', error);
@@ -150,15 +146,12 @@ const StudentsManagement: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     try {
-      const response = await fetch(`/api/students/${id}`, {
-        method: 'DELETE',
-      });
-      const result = await response.json();
-      if (result.code === 200) {
+      const response = await deleteStudentsPinyin2025001();
+      if (response.code === 200) {
         message.success('删除成功');
         loadStudents(searchParams);
       } else {
-        message.error(result.message || '删除失败');
+        message.error(response.message || '删除失败');
       }
     } catch (error) {
       console.error('删除学生失败:', error);
@@ -168,27 +161,30 @@ const StudentsManagement: React.FC = () => {
 
   const handleSubmit = async (values: any) => {
     try {
-      const url = editingStudent ? `/api/students/${editingStudent.id}` : '/api/students';
-      const method = editingStudent ? 'PUT' : 'POST';
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      let response;
+      if (editingStudent) {
+        response = await putStudentsPinyin2025001({
+          data: {
+            name: values.name,
+            student_id: values.student_id,
+            is_active: values.is_active
+          }
+        });
+      } else {
+        response = await postStudents({
           name: values.name,
           student_id: values.student_id,
           is_active: values.is_active
-        }),
-      });
-      const result = await response.json();
-      if (result.code === 200) {
+        });
+      }
+      
+      if (response.code === 200) {
         message.success(`${editingStudent ? '更新' : '添加'}成功`);
         setModalVisible(false);
         form.resetFields();
         loadStudents(searchParams);
       } else {
-        message.error(result.message || `${editingStudent ? '更新' : '添加'}失败`);
+        message.error(response.message || `${editingStudent ? '更新' : '添加'}失败`);
       }
     } catch (error) {
       console.error(`${editingStudent ? '更新' : '添加'}学生失败:`, error);
@@ -217,34 +213,25 @@ const StudentsManagement: React.FC = () => {
       width: 120
     },
     {
-      title: '状态',
-      dataIndex: 'is_active',
-      key: 'is_active',
+      title: '资产',
+      dataIndex: 'funds',
+      key: 'funds',
       width: 100,
-      render: (active) => (
-        <Tag color={active ? 'green' : 'red'}>
-          {active ? '在校' : '离校'}
-        </Tag>
-      )
+      sorter: (a, b) => a.funds - b.funds
     },
     {
-      title: '被点名次数',
-      dataIndex: 'rollCallCount',
-      key: 'rollCallCount',
+      title: '面试次数',
+      dataIndex: 'interviewer_count',
+      key: 'interviewer_count',
       width: 120,
-      sorter: (a, b) => a.rollCallCount - b.rollCallCount
+      sorter: (a, b) => a.interviewer_count - b.interviewer_count
     },
     {
-      title: '最近点名',
-      dataIndex: 'lastRollCallTime',
-      key: 'lastRollCallTime',
+      title: '求职次数',
+      dataIndex: 'applicant_count',
+      key: 'applicant_count',
       width: 180,
-      render: (date: string) => date ? new Date(date).toLocaleString() : '从未被点名',
-      sorter: (a, b) => {
-        if (!a.lastRollCallTime) return 1;
-        if (!b.lastRollCallTime) return -1;
-        return new Date(b.lastRollCallTime).getTime() - new Date(a.lastRollCallTime).getTime();
-      }
+      sorter: (a, b) => a.applicant_count - b.applicant_count
     },
     {
       title: '创建时间',
@@ -267,7 +254,7 @@ const StudentsManagement: React.FC = () => {
           >
             编辑
           </Button>
-          <Popconfirm
+          {/* <Popconfirm
             title="确定要删除这名学生吗？"
             description="此操作将永久删除该学生信息，是否继续？"
             onConfirm={() => handleDelete(record.id)}
@@ -281,20 +268,54 @@ const StudentsManagement: React.FC = () => {
             >
               删除
             </Button>
-          </Popconfirm>
+          </Popconfirm> */}
         </Space>
       )
     }
   ];
 
-  const handleSearch = (values: any) => {
-    const newParams = {
-      ...searchParams,
-      keyword: values.keyword,
-      page: 1
-    };
-    setSearchParams(newParams);
-    loadStudents(newParams);
+  const handleSearch = async (values: any) => {
+    try {
+      const response = await getStudentsSearch({
+        keyword: values.keyword
+      });
+      if (response.code === 200 && response.data) {
+        setStudents(response.data);
+        setPagination({
+          ...pagination,
+          current: 1,
+          total: response.data.length
+        });
+      } else {
+        message.error(response.message || '搜索失败');
+      }
+    } catch (error) {
+      console.error('搜索失败:', error);
+      message.error('搜索失败，请稍后重试');
+    }
+  };
+
+  const handleBatchDelete = async () => {
+    try {
+      const deletePromises = selectedRowKeys.map(id => deleteStudentsPinyin2025001());
+      const results = await Promise.allSettled(deletePromises);
+      
+      const successCount = results.filter(result => result.status === 'fulfilled' && result.value.code === 200).length;
+      const failCount = selectedRowKeys.length - successCount;
+      
+      if (successCount > 0) {
+        message.success(`成功删除 ${successCount} 名学生`);
+        setSelectedRowKeys([]);
+        loadStudents(searchParams);
+      }
+      
+      if (failCount > 0) {
+        message.error(`${failCount} 名学生删除失败`);
+      }
+    } catch (error) {
+      console.error('批量删除失败:', error);
+      message.error('批量删除失败，请稍后重试');
+    }
   };
 
   const handleTableChange = (pagination: any) => {
@@ -309,18 +330,25 @@ const StudentsManagement: React.FC = () => {
 
   const handleExport = async () => {
     try {
-      const response = await fetch('/api/students/export', {
-        method: 'GET',
-      });
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = '学生名单.xlsx';
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      const response = await getStudentsSortFunds();
+      if (response.code === 200 && response.data) {
+        // 将数据转换为CSV格式
+        const csvContent = 'data:text/csv;charset=utf-8,' + 
+          '姓名,学号,状态,资金,排名\n' + 
+          response.data.map(student => {
+            return `${student.name},${student.student_id},${student.is_active ? '在校' : '离校'},${student.funds},${student.ranking}`;
+          }).join('\n');
+
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement('a');
+        link.setAttribute('href', encodedUri);
+        link.setAttribute('download', '学生名单.csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        throw new Error(response.message || '导出失败');
+      }
     } catch (error) {
       console.error('导出失败:', error);
       message.error('导出失败，请稍后重试');
@@ -362,6 +390,7 @@ const StudentsManagement: React.FC = () => {
           <Form.Item name="keyword">
             <Input.Search
               placeholder="搜索学生姓名或学号"
+              
               style={{ width: 250 }}
               allowClear
               onSearch={() => searchForm.submit()}
@@ -374,10 +403,10 @@ const StudentsManagement: React.FC = () => {
         title="学生列表"
         extra={
           <Space>
-            <Upload {...uploadProps}>
+            {/* <Upload {...uploadProps}>
               <Button icon={<UploadOutlined />}>导入学生</Button>
             </Upload>
-            <Button icon={<DownloadOutlined />} onClick={handleExport}>导出学生</Button>
+            <Button icon={<DownloadOutlined />} onClick={handleExport}>导出学生</Button> */}
             <Button
               type="primary"
               icon={<PlusOutlined />}
@@ -465,7 +494,7 @@ const StudentsManagement: React.FC = () => {
           >
             <Input placeholder="请输入学生姓名" />
           </Form.Item>
-          <Form.Item
+          { !editingStudent && (  <Form.Item
             name="student_id"
             label="学号"
             rules={[
@@ -474,8 +503,9 @@ const StudentsManagement: React.FC = () => {
             ]}
           >
             <Input placeholder="请输入8-12位学号" />
-          </Form.Item>
-          <Form.Item
+          </Form.Item>)}
+        
+          {/* <Form.Item
             name="is_active"
             label="状态"
             valuePropName="checked"
@@ -484,7 +514,7 @@ const StudentsManagement: React.FC = () => {
               checkedChildren="在校"
               unCheckedChildren="离校"
             />
-          </Form.Item>
+          </Form.Item> */}
         </Form>
       </Modal>
     </PageContainer>

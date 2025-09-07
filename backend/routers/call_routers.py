@@ -1,5 +1,6 @@
 import random
 import copy
+import os
 from flask import Blueprint, request, jsonify, abort
 import json, time
 from routers.history_routes import InterviewRecordManager
@@ -28,9 +29,10 @@ class JsonOptions:
             json.dump(data, f, ensure_ascii=False, indent=4)
 
 
-name_path = 'data/students.json'
-
-lib_path = 'data/call.json'
+# 使用os.path.join确保跨平台兼容性
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+name_path = os.path.join(BASE_DIR, 'data', 'students.json')
+lib_path = os.path.join(BASE_DIR, 'data', 'call.json')
 
 
 @call_bp.route('/api/roll-call', methods=['GET'])

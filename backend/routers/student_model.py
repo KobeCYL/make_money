@@ -195,7 +195,8 @@ def validate_student_data(student: Student) -> dict:
 # ==================== Services ====================
 class StudentService:
     def __init__(self):
-        self.file_path = 'data/students.json'  # 统一信息存储文件
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        self.file_path = os.path.join(base_dir, 'data', 'students.json')  # 统一信息存储文件
         self.students = self.load_students()
 
     def load_students(self) -> List[Student]:
@@ -668,8 +669,8 @@ def create_student():
 
         # 保存学生
         if student_service.create_student(student):
-            response = api_response(201, "创建成功", student.to_dict())
-            response.status_code = 201
+            response = api_response(200, "创建成功", student.to_dict())
+            response.status_code = 200
             return response
         else:
             return api_response(400, "创建学生失败，学号可能已存在，或者信息有误")

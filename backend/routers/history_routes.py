@@ -1,12 +1,16 @@
 from flask import Flask, request, jsonify, Blueprint
 import json
 import datetime
+import os
 from typing import List, Dict, Optional
 
 
 
 class InterviewRecordManager:
-    def __init__(self, data_file: str = "data/interview_records.json"):
+    def __init__(self, data_file: str = None):
+        if data_file is None:
+            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            data_file = os.path.join(base_dir, 'data', 'interview_records.json')
         self.data_file = data_file
         self.records = self._load_data()
         # 初始化当前最大ID
