@@ -50,13 +50,14 @@ def random_interviewers():
     call_data = lib.get_json()
 
     call_history = call_data['call_history']
-    interview_history = call_data['interview_history']
-    print('interview_history', interview_history)
+    interview_history1 = call_data['interview_history']
+    print('interview_history', interview_history1)
+    interview_history = copy.deepcopy(interview_history1)
     interview_history.extend(call_history)
 
     # 随机获取count个面试官
     count = request.args.get('count', default=1, type=int)  # 获取 count 参数，默认为1
-
+    # 可以被点名的名单
     can_call_list = []
     three_days_ago = time.time() - 60 * 60 * 24 * 3
     three_days_list = list(filter(lambda item: item['time'] > three_days_ago, interview_history))
@@ -64,21 +65,31 @@ def random_interviewers():
     interview_history_name_list = [item['name'] for item in three_days_list]
     total_list = JsonOptions(name_path).get_json()
     interviewed_list = []
+    interviewed_name_list = []
     for item in total_list:
         if item['name'] not in interview_history_name_list:
             can_call_list.append(item)
         else:
-            interviewed_list.append(item)
+            name = item['name']
+
+            if name in interviewed_name_list:
+                interviewed_list.append(item)
+                interviewed_name_list.append(name)
+
     new_interviewed_list = []
     # 获取随机名单
     index_list = []
-
+    if len(interviewed_list) == 0:
+        interviewed_list = total_list
     if count > len(can_call_list):
         gap = count - len(can_call_list)
         for i in range(gap):
-            index = random.randint(0, len(interviewed_list) -1)
+            length = len(interviewed_list)
+            index = random.randint(0, length)
             item = interviewed_list[index]
-            new_interviewed_list.append(new_interviewed_list)
+            new_interviewed_list.append(item)
+        index_list.extend(can_call_list)
+        index_list.extend(new_interviewed_list)
     else:
 
         for i in range(count):
@@ -94,15 +105,14 @@ def random_interviewers():
                 currentItem['id'] = currentItem['student_id']
                 index_list.append(currentItem)
     if len(new_interviewed_list) > 0:
-        interview_history = [{
-            'id': item['id'],
+        interview_history1 = [{
+            'id': item['student_id'],
             'name': item['name'],
             'time': time.time()
         } for item in new_interviewed_list]
-        index_list.extend(new_interviewed_list)
     else:
 
-        interview_history.extend([{
+        interview_history1.extend([{
             'id': item['id'],
             'name': item['name'],
             'time': time.time()
@@ -111,7 +121,7 @@ def random_interviewers():
     # 保存表
     lib.set_json({
         'call_history': call_history,
-        'interview_history': interview_history
+        'interview_history': interview_history1
     })
 
     return jsonify({
@@ -139,7 +149,7 @@ def random_student():
         for item in total_list:
             if item['name'] not in call_name_list:
                 can_call_list.append(item)
-            else :
+            else:
                 called_list.append(item)
         if len(can_call_list) == 0:
             can_call_list = copy.deepcopy(total_list)
@@ -156,7 +166,8 @@ def random_student():
         for i in range(count):
             index = random.randint(0, len(can_call_list) - 1)
             currentItem = can_call_list.pop(index)
-            currentItem["avatar"] = 'https://api.dicebear.com/7.x/avataaars/svg?seed=81cc91ea-1159-4a71-bfa6-5923f473fe37'
+            currentItem[
+                "avatar"] = 'https://api.dicebear.com/7.x/avataaars/svg?seed=81cc91ea-1159-4a71-bfa6-5923f473fe37'
             currentItem['jobSeekingCount'] = currentItem['applicant_count']
             currentItem['interviewCount'] = currentItem['interviewer_count']
             currentItem['id'] = currentItem['student_id']
@@ -264,6 +275,9 @@ def submit_result():
             'data': record_manager.get_all_records()
         })
     except Exception as e:
+        error_traceback = traceback.format_exc()  # 获取完整的错误堆栈
+        print(f"Error occurred: {error_traceback}")  # 打印完整堆栈信息
+
         return jsonify({
             'status': '400',
             'data': None,

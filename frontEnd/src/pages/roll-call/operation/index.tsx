@@ -276,7 +276,9 @@ const RollCallOperation: React.FC = () => {
         interviewRecords: [],
         isCompleted: false
       }));
-      setStudentInterviewStates(initialStates);
+      setStudentInterviewStates(prev => {
+        return [...prev, ...initialStates]
+      });
 
       setActiveStudentIndex(0);
       init()
@@ -462,7 +464,7 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
                 <Row gutter={[16, 16]}>
                   {selectedStudents.map((student, index) => {
                     const studentState = getCurrentStudentState(student.id);
-                    const hasSelectedInterviewers = studentState?.selectedInterviewers.length === 5;
+                    const hasSelectedInterviewers = studentState?.selectedInterviewers.length >= 5;
 
                     return (
                       <Col span={8} key={student.id}>
@@ -499,7 +501,7 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
                             }}
                             disabled={hasSelectedInterviewers}
                           >
-                            {hasSelectedInterviewers ? '已选择面试官' : '邀请面试官'}
+                            {hasSelectedInterviewers ? '已面试' : '邀请面试官'}
                           </Button>
                         </Space>
                       </Card>
@@ -613,8 +615,11 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
                           title={
                             <Space>
                               <Avatar size={32} src={interviewer.avatar} className={styles.interviewerAvatar} />
-                              <span>{interviewer.name}</span>
-                              <Typography.Text type="secondary">({interviewer.title})</Typography.Text>
+                              <span>{interviewer.name} </span>
+                              <Typography.Text type="secondary">(
+                                {/* {interviewer.title} */}
+                                高级面试官-CTO
+                                )</Typography.Text>
                             </Space>
                           }
                           style={{ marginBottom: '16px' }}

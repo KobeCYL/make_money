@@ -11,11 +11,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T17:58:57",
-    "interviewer_count": 1,
+    "updated_at": "2025-09-07T21:39:27",
+    "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 10
+    "funds": 0,
+    "ranking": 21
   },
   {
     "student_id": "2025002",
@@ -29,11 +29,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-06T00:00:00",
-    "interviewer_count": 0,
+    "updated_at": "2025-09-07T23:16:52",
+    "interviewer_count": 2,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 11
+    "funds": 300,
+    "ranking": 9
   },
   {
     "student_id": "2025003",
@@ -47,11 +47,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-06T00:00:00",
-    "interviewer_count": 0,
+    "updated_at": "2025-09-07T23:16:59",
+    "interviewer_count": 2,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 12
+    "funds": 300,
+    "ranking": 10
   },
   {
     "student_id": "2025004",
@@ -65,11 +65,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T17:59:01",
-    "interviewer_count": 0,
-    "applicant_count": 1,
-    "funds": 0.0,
-    "ranking": 13
+    "updated_at": "2025-09-07T22:47:37",
+    "interviewer_count": 1,
+    "applicant_count": 0,
+    "funds": 0,
+    "ranking": 22
   },
   {
     "student_id": "2025005",
@@ -83,11 +83,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-06T00:00:00",
+    "updated_at": "2025-09-07T21:39:27",
     "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 14
+    "funds": 0,
+    "ranking": 23
   },
   {
     "student_id": "2025006",
@@ -101,11 +101,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T20:02:52",
-    "interviewer_count": 1,
+    "updated_at": "2025-09-07T21:39:27",
+    "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 15
+    "funds": 0,
+    "ranking": 24
   },
   {
     "student_id": "2025007",
@@ -119,11 +119,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-06T00:00:00",
+    "updated_at": "2025-09-07T21:39:27",
     "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 16
+    "funds": 0,
+    "ranking": 25
   },
   {
     "student_id": "2025008",
@@ -137,11 +137,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T16:31:13",
+    "updated_at": "2025-09-07T21:39:27",
     "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 17
+    "funds": 0,
+    "ranking": 26
   },
   {
     "student_id": "2025009",
@@ -155,11 +155,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T20:03:08",
-    "interviewer_count": 0,
-    "applicant_count": 6,
-    "funds": 900.0,
-    "ranking": 2
+    "updated_at": "2025-09-07T23:17:24",
+    "interviewer_count": 2,
+    "applicant_count": 0,
+    "funds": 300,
+    "ranking": 11
   },
   {
     "student_id": "2025010",
@@ -173,11 +173,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T20:04:28",
-    "interviewer_count": 0,
-    "applicant_count": 2,
-    "funds": 600.0,
-    "ranking": 4
+    "updated_at": "2025-09-07T23:17:32",
+    "interviewer_count": 2,
+    "applicant_count": 0,
+    "funds": 300,
+    "ranking": 12
   },
   {
     "student_id": "2025011",
@@ -191,11 +191,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T17:54:54",
-    "interviewer_count": 2,
+    "updated_at": "2025-09-07T21:39:28",
+    "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 18
+    "funds": 0,
+    "ranking": 27
   },
   {
     "student_id": "2025012",
@@ -209,11 +209,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T14:20:25",
-    "interviewer_count": 1,
+    "updated_at": "2025-09-07T21:39:28",
+    "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 19
+    "funds": 0,
+    "ranking": 28
   },
   {
     "student_id": "2025013",
@@ -227,10 +227,10 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T18:06:56",
-    "interviewer_count": 3,
+    "updated_at": "2025-09-07T21:39:28",
+    "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 10000,
+    "funds": 1001000000,
     "ranking": 1
   },
   {
@@ -245,11 +245,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-06T00:00:00",
+    "updated_at": "2025-09-07T21:39:28",
     "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 20
+    "funds": 0,
+    "ranking": 29
   },
   {
     "student_id": "2025015",
@@ -263,11 +263,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-06T00:00:00",
+    "updated_at": "2025-09-07T21:39:28",
     "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 21
+    "funds": 0,
+    "ranking": 30
   },
   {
     "student_id": "2025016",
@@ -281,11 +281,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T16:30:23",
-    "interviewer_count": 1,
-    "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 22
+    "updated_at": "2025-09-07T22:46:33",
+    "interviewer_count": 0,
+    "applicant_count": 5,
+    "funds": 600,
+    "ranking": 4
   },
   {
     "student_id": "2025017",
@@ -299,11 +299,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T12:20:17",
-    "interviewer_count": 0,
-    "applicant_count": 1,
-    "funds": 0.0,
-    "ranking": 23
+    "updated_at": "2025-09-07T23:17:03",
+    "interviewer_count": 2,
+    "applicant_count": 0,
+    "funds": 600,
+    "ranking": 5
   },
   {
     "student_id": "2025018",
@@ -317,11 +317,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T16:31:47",
+    "updated_at": "2025-09-07T21:39:28",
     "interviewer_count": 0,
-    "applicant_count": 1,
-    "funds": 0.0,
-    "ranking": 24
+    "applicant_count": 0,
+    "funds": 0,
+    "ranking": 31
   },
   {
     "student_id": "2025019",
@@ -335,11 +335,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-06T00:00:00",
+    "updated_at": "2025-09-07T23:17:32",
     "interviewer_count": 0,
-    "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 25
+    "applicant_count": 5,
+    "funds": 300,
+    "ranking": 13
   },
   {
     "student_id": "2025020",
@@ -353,11 +353,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T14:20:25",
-    "interviewer_count": 0,
+    "updated_at": "2025-09-07T23:16:39",
+    "interviewer_count": 1,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 26
+    "funds": 300,
+    "ranking": 14
   },
   {
     "student_id": "2025021",
@@ -371,11 +371,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T18:06:56",
+    "updated_at": "2025-09-07T21:39:28",
     "interviewer_count": 0,
-    "applicant_count": 1,
-    "funds": 0.0,
-    "ranking": 27
+    "applicant_count": 0,
+    "funds": 0,
+    "ranking": 32
   },
   {
     "student_id": "2025022",
@@ -389,11 +389,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-06T00:00:00",
+    "updated_at": "2025-09-07T21:39:28",
     "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 28
+    "funds": 0,
+    "ranking": 33
   },
   {
     "student_id": "2025023",
@@ -407,11 +407,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-06T00:00:00",
-    "interviewer_count": 0,
+    "updated_at": "2025-09-07T23:17:16",
+    "interviewer_count": 1,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 29
+    "funds": 0,
+    "ranking": 34
   },
   {
     "student_id": "2025024",
@@ -425,11 +425,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T20:04:24",
-    "interviewer_count": 1,
-    "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 30
+    "updated_at": "2025-09-07T23:18:55",
+    "interviewer_count": 2,
+    "applicant_count": 1,
+    "funds": 300,
+    "ranking": 15
   },
   {
     "student_id": "2025025",
@@ -443,11 +443,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T20:02:40",
-    "interviewer_count": 1,
+    "updated_at": "2025-09-07T21:39:28",
+    "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 31
+    "funds": 0,
+    "ranking": 35
   },
   {
     "student_id": "2025026",
@@ -461,11 +461,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-06T00:00:00",
-    "interviewer_count": 0,
-    "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 32
+    "updated_at": "2025-09-07T23:19:02",
+    "interviewer_count": 1,
+    "applicant_count": 1,
+    "funds": 600,
+    "ranking": 6
   },
   {
     "student_id": "2025027",
@@ -479,11 +479,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-06T00:00:00",
+    "updated_at": "2025-09-07T21:39:28",
     "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 33
+    "funds": 0,
+    "ranking": 36
   },
   {
     "student_id": "2025028",
@@ -497,11 +497,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T20:02:47",
-    "interviewer_count": 1,
+    "updated_at": "2025-09-07T23:19:02",
+    "interviewer_count": 2,
     "applicant_count": 0,
-    "funds": 300.0,
-    "ranking": 5
+    "funds": 300,
+    "ranking": 16
   },
   {
     "student_id": "2025029",
@@ -515,11 +515,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-06T00:00:00",
+    "updated_at": "2025-09-07T21:39:28",
     "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 34
+    "funds": 0,
+    "ranking": 37
   },
   {
     "student_id": "2025030",
@@ -533,11 +533,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T20:04:28",
+    "updated_at": "2025-09-07T23:17:20",
     "interviewer_count": 1,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 35
+    "funds": 300,
+    "ranking": 17
   },
   {
     "student_id": "2025031",
@@ -551,11 +551,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T19:45:43",
+    "updated_at": "2025-09-07T21:39:28",
     "interviewer_count": 0,
-    "applicant_count": 3,
-    "funds": 900.0,
-    "ranking": 3
+    "applicant_count": 0,
+    "funds": 0,
+    "ranking": 38
   },
   {
     "student_id": "2025032",
@@ -569,11 +569,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-06T00:00:00",
+    "updated_at": "2025-09-07T23:17:09",
     "interviewer_count": 0,
-    "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 36
+    "applicant_count": 5,
+    "funds": 600,
+    "ranking": 7
   },
   {
     "student_id": "2025033",
@@ -587,11 +587,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-06T00:00:00",
-    "interviewer_count": 0,
-    "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 37
+    "updated_at": "2025-09-07T23:16:44",
+    "interviewer_count": 1,
+    "applicant_count": 5,
+    "funds": 900,
+    "ranking": 2
   },
   {
     "student_id": "2025034",
@@ -605,11 +605,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T20:03:08",
-    "interviewer_count": 1,
+    "updated_at": "2025-09-07T23:16:44",
+    "interviewer_count": 2,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 38
+    "funds": 600,
+    "ranking": 8
   },
   {
     "student_id": "2025035",
@@ -623,11 +623,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T10:49:43",
-    "interviewer_count": 1,
-    "applicant_count": 0,
-    "funds": 300.0,
-    "ranking": 6
+    "updated_at": "2025-09-07T22:48:00",
+    "interviewer_count": 0,
+    "applicant_count": 6,
+    "funds": 900,
+    "ranking": 3
   },
   {
     "student_id": "2025036",
@@ -641,10 +641,10 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-06T00:00:00",
+    "updated_at": "2025-09-07T21:39:28",
     "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 0.0,
+    "funds": 0,
     "ranking": 39
   },
   {
@@ -659,10 +659,10 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T17:58:53",
-    "interviewer_count": 1,
+    "updated_at": "2025-09-07T21:39:28",
+    "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 0.0,
+    "funds": 0,
     "ranking": 40
   },
   {
@@ -677,10 +677,10 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-06T00:00:00",
+    "updated_at": "2025-09-07T21:39:28",
     "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 0.0,
+    "funds": 0,
     "ranking": 41
   },
   {
@@ -695,11 +695,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T19:45:43",
-    "interviewer_count": 1,
+    "updated_at": "2025-09-07T23:18:55",
+    "interviewer_count": 3,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 42
+    "funds": 300,
+    "ranking": 18
   },
   {
     "student_id": "2025040",
@@ -713,11 +713,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T17:59:01",
-    "interviewer_count": 1,
+    "updated_at": "2025-09-07T21:39:28",
+    "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 43
+    "funds": 0,
+    "ranking": 42
   },
   {
     "student_id": "2025041",
@@ -731,11 +731,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-06T00:00:00",
+    "updated_at": "2025-09-07T21:39:28",
     "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 44
+    "funds": 0,
+    "ranking": 43
   },
   {
     "student_id": "2025042",
@@ -749,11 +749,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T12:20:17",
-    "interviewer_count": 1,
+    "updated_at": "2025-09-07T21:39:28",
+    "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 300.0,
-    "ranking": 7
+    "funds": 0,
+    "ranking": 44
   },
   {
     "student_id": "2025043",
@@ -767,10 +767,10 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-06T00:00:00",
+    "updated_at": "2025-09-07T21:39:28",
     "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 0.0,
+    "funds": 0,
     "ranking": 45
   },
   {
@@ -785,10 +785,10 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-06T00:00:00",
+    "updated_at": "2025-09-07T21:39:28",
     "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 0.0,
+    "funds": 0,
     "ranking": 46
   },
   {
@@ -803,11 +803,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T16:29:20",
-    "interviewer_count": 0,
+    "updated_at": "2025-09-07T23:17:28",
+    "interviewer_count": 2,
     "applicant_count": 0,
-    "funds": 0.0,
-    "ranking": 47
+    "funds": 300,
+    "ranking": 19
   },
   {
     "student_id": "2025046",
@@ -821,11 +821,11 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T20:02:56",
+    "updated_at": "2025-09-07T23:16:55",
     "interviewer_count": 1,
     "applicant_count": 0,
-    "funds": 300.0,
-    "ranking": 8
+    "funds": 300,
+    "ranking": 20
   },
   {
     "student_id": "2025047",
@@ -839,10 +839,10 @@
     "address": null,
     "status": "活跃",
     "created_at": "2025-09-06T00:00:00",
-    "updated_at": "2025-09-07T20:03:01",
-    "interviewer_count": 1,
+    "updated_at": "2025-09-07T21:39:29",
+    "interviewer_count": 0,
     "applicant_count": 0,
-    "funds": 300.0,
-    "ranking": 9
+    "funds": 0,
+    "ranking": 47
   }
 ]
