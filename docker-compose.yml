@@ -1,7 +1,6 @@
-version: '3.8'
-
 services:
   frontend:
+    image: interview-frontend
     build:
       context: .
       dockerfile: Dockerfile.frontend
@@ -14,6 +13,7 @@ services:
       - app-network
 
   backend:
+    image: interview-backend
     build:
       context: .
       dockerfile: Dockerfile.backend
