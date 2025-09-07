@@ -442,7 +442,10 @@ const StudentsManagement: React.FC = () => {
           <Popconfirm
             title="确定要删除选中的学生吗？"
             description="此操作将永久删除选中的学生信息，是否继续？"
-            onConfirm={handleBatchDelete}
+              onConfirm={() => {
+                'use strict';
+                console.log('adsfasd')
+            }}
             okText="确定"
             cancelText="取消"
           >

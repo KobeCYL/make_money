@@ -5,6 +5,7 @@ from flask import Blueprint, request, jsonify, abort
 import json, time
 from routers.history_routes import InterviewRecordManager
 from routers.student_model import StudentService
+import traceback  # 添加这行导入
 
 call_bp = Blueprint('call', __name__)
 
@@ -62,30 +63,50 @@ def random_interviewers():
 
     interview_history_name_list = [item['name'] for item in three_days_list]
     total_list = JsonOptions(name_path).get_json()
-
+    interviewed_list = []
     for item in total_list:
         if item['name'] not in interview_history_name_list:
             can_call_list.append(item)
+        else:
+            interviewed_list.append(item)
+    new_interviewed_list = []
     # 获取随机名单
     index_list = []
-    for i in range(count):
-        if len(can_call_list) == 0:
-            break
-        index = random.randint(0, len(can_call_list) - 1)
-        if can_call_list[index]:
-            currentItem = can_call_list.pop(index)
-            currentItem[
-                "avatar"] = 'https://api.dicebear.com/7.x/avataaars/svg?seed=81cc91ea-1159-4a71-bfa6-5923f473fe37'
-            currentItem['jobSeekingCount'] = currentItem['applicant_count']
-            currentItem['interviewCount'] = currentItem['interviewer_count']
-            currentItem['id'] = currentItem['student_id']
-            index_list.append(currentItem)
 
-    interview_history.extend([{
-        'id': item['id'],
-        'name': item['name'],
-        'time': time.time()
-    } for item in index_list])
+    if count > len(can_call_list):
+        gap = count - len(can_call_list)
+        for i in range(gap):
+            index = random.randint(0, len(interviewed_list) -1)
+            item = interviewed_list[index]
+            new_interviewed_list.append(new_interviewed_list)
+    else:
+
+        for i in range(count):
+            if len(can_call_list) == 0:
+                break
+            index = random.randint(0, len(can_call_list) - 1)
+            if can_call_list[index]:
+                currentItem = can_call_list.pop(index)
+                currentItem[
+                    "avatar"] = 'https://api.dicebear.com/7.x/avataaars/svg?seed=81cc91ea-1159-4a71-bfa6-5923f473fe37'
+                currentItem['jobSeekingCount'] = currentItem['applicant_count']
+                currentItem['interviewCount'] = currentItem['interviewer_count']
+                currentItem['id'] = currentItem['student_id']
+                index_list.append(currentItem)
+    if len(new_interviewed_list) > 0:
+        interview_history = [{
+            'id': item['id'],
+            'name': item['name'],
+            'time': time.time()
+        } for item in new_interviewed_list]
+        index_list.extend(new_interviewed_list)
+    else:
+
+        interview_history.extend([{
+            'id': item['id'],
+            'name': item['name'],
+            'time': time.time()
+        } for item in index_list])
 
     # 保存表
     lib.set_json({
@@ -100,7 +121,7 @@ def random_interviewers():
     })
 
 
-# 获取随机学生
+# 获取随机求职者
 @call_bp.route('/api/roll-call/random-student', methods=['GET'])
 def random_student():
     try:
@@ -110,14 +131,16 @@ def random_student():
         call_history = call_data['call_history']
 
         call_name_list = [item['name'] for item in call_history]
+        student_service = StudentService()
 
         total_list = JsonOptions(name_path).get_json()
+        called_list = []
         can_call_list = []
         for item in total_list:
             if item['name'] not in call_name_list:
                 can_call_list.append(item)
-
-
+            else :
+                called_list.append(item)
         if len(can_call_list) == 0:
             can_call_list = copy.deepcopy(total_list)
             call_history = []
@@ -125,23 +148,26 @@ def random_student():
         if count > len(can_call_list):
             gap = count - len(can_call_list)
             for i in range(gap):
-                index = random.randint(0, len(call_name_list) - 1)
-                item  = call_history[index]
+                index = random.randint(0, len(called_list) - 1)
+                item = called_list[index]
                 new_call_list.append(item)
             can_call_list.extend(new_call_list)
         index_list = []
         for i in range(count):
             index = random.randint(0, len(can_call_list) - 1)
             currentItem = can_call_list.pop(index)
-            currentItem[
-                "avatar"] = 'https://api.dicebear.com/7.x/avataaars/svg?seed=81cc91ea-1159-4a71-bfa6-5923f473fe37'
+            currentItem["avatar"] = 'https://api.dicebear.com/7.x/avataaars/svg?seed=81cc91ea-1159-4a71-bfa6-5923f473fe37'
             currentItem['jobSeekingCount'] = currentItem['applicant_count']
             currentItem['interviewCount'] = currentItem['interviewer_count']
             currentItem['id'] = currentItem['student_id']
             index_list.append(currentItem)
         if len(new_call_list) > 0:
-            call_history = new_call_list
-        else :
+            call_history = [{
+                'id': item['id'],
+                'name': item['name'],
+                'time': time.time()
+            } for item in new_call_list]
+        else:
             call_history.extend([{
                 'id': item['id'],
                 'name': item['name'],
@@ -165,13 +191,11 @@ def random_student():
             "message": "ok"
         })
     except Exception as e:
-        print('e', e)
+        error_traceback = traceback.format_exc()  # 获取完整的错误堆栈
+        print(f"Error occurred: {error_traceback}")  # 打印完整堆栈信息
         return jsonify({
             "error": str(e),
         }), 500
-
-
-
 
 
 # 获取获取学生状态
