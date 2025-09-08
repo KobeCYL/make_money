@@ -1,0 +1,17 @@
+serverAddr = "124.222.160.182"
+serverPort = 7000
+
+[common]
+token = "your_token"
+
+[frontend]
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 9527
+remotePort = 9527
+
+[backend]
+type = "tcp"
+localIP = "127.0.0.1"
+localPort = 5000
+remotePort = 5000
