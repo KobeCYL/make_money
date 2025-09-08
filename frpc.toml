@@ -1,4 +1,4 @@
-serverAddr = "124.222.160.182"
+serverAddr = "xxx"
 serverPort = 7000
 
 [common]
@@ -13,5 +13,5 @@ remotePort = 9527
 [backend]
 type = "tcp"
 localIP = "127.0.0.1"
-localPort = 5000
-remotePort = 5000
+localPort = 6666
+remotePort = 666

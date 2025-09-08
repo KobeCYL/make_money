@@ -6,7 +6,9 @@ import re
 from datetime import datetime
 from typing import List, Optional
 from flask import Flask, jsonify, request, Blueprint
-import traceback  # 添加这行导入
+import traceback
+
+from routers.history_routes import InterviewRecordManager  # 添加这行导入
 
 students_bp = Blueprint('students', __name__, url_prefix='/')
 
@@ -764,6 +766,12 @@ def refresh_data():
             student.applicant_count = 0
             student_service.update_student(student)
 
+        # 清空面试记录
+        record_manager = InterviewRecordManager()
+        total_record_list = record_manager.get_all_records()
+
+        for record in total_record_list:
+            record_manager.delete_record(record.id)
 
         return api_response(200, "刷成功")
     except Exception as e:

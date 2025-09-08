@@ -42,6 +42,14 @@ export async function deleteStudentsPinyin2025001(options?: {
   });
 }
 
+/** 初始化学生列表 GET /api/students/refresh-data */
+export async function getStudentsRefreshData(options?: { [key: string]: any }) {
+  return request<Record<string, any>>("/api/students/refresh-data", {
+    method: "GET",
+    ...(options || {}),
+  });
+}
+
 /** 按字段搜索接口 GET /api/students/search */
 export async function getStudentsSearch(
   // 叠加生成的Param类型 (非body参数swagger默认没有生成对象)

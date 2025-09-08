@@ -21,13 +21,13 @@ import {
   UploadOutlined,
   DownloadOutlined
 } from '@ant-design/icons';
-import { 
+import {
   getStudents,
   postStudents,
   putStudentsPinyin2025001,
   deleteStudentsPinyin2025001,
   getStudentsSearch,
-  getStudentsSortFunds 
+  getStudentsSortFunds
 } from '@/services/makeMoney/user';
 import type { UploadProps } from 'antd';
 import { PageContainer } from '@ant-design/pro-components';
@@ -116,11 +116,9 @@ const StudentsManagement: React.FC = () => {
       });
       if (response.code === 200 && response.data) {
         setStudents(response.data);
-        setPagination({
-          ...pagination,
-          current: params.page,
-          total: response.data.length
-        });
+
+
+        setTotal(response.data.length)
       } else {
         throw new Error(response.message || '获取学生列表失败');
       }
@@ -177,7 +175,7 @@ const StudentsManagement: React.FC = () => {
           is_active: values.is_active
         });
       }
-      
+
       if (response.code === 200) {
         message.success(`${editingStudent ? '更新' : '添加'}成功`);
         setModalVisible(false);
@@ -273,19 +271,18 @@ const StudentsManagement: React.FC = () => {
       )
     }
   ];
-
+  const [total, setTotal] = useState(0);
   const handleSearch = async (values: any) => {
     try {
       const response = await getStudentsSearch({
         keyword: values.keyword
       });
       if (response.code === 200 && response.data) {
-        setStudents(response.data);
-        setPagination({
-          ...pagination,
-          current: 1,
-          total: response.data.length
-        });
+        setStudents(response.data || []);
+
+        setTotal(response.data.length)
+
+
       } else {
         message.error(response.message || '搜索失败');
       }
@@ -299,16 +296,16 @@ const StudentsManagement: React.FC = () => {
     try {
       const deletePromises = selectedRowKeys.map(id => deleteStudentsPinyin2025001());
       const results = await Promise.allSettled(deletePromises);
-      
+
       const successCount = results.filter(result => result.status === 'fulfilled' && result.value.code === 200).length;
       const failCount = selectedRowKeys.length - successCount;
-      
+
       if (successCount > 0) {
         message.success(`成功删除 ${successCount} 名学生`);
         setSelectedRowKeys([]);
         loadStudents(searchParams);
       }
-      
+
       if (failCount > 0) {
         message.error(`${failCount} 名学生删除失败`);
       }
@@ -333,8 +330,8 @@ const StudentsManagement: React.FC = () => {
       const response = await getStudentsSortFunds();
       if (response.code === 200 && response.data) {
         // 将数据转换为CSV格式
-        const csvContent = 'data:text/csv;charset=utf-8,' + 
-          '姓名,学号,状态,资金,排名\n' + 
+        const csvContent = 'data:text/csv;charset=utf-8,' +
+          '姓名,学号,状态,资金,排名\n' +
           response.data.map(student => {
             return `${student.name},${student.student_id},${student.is_active ? '在校' : '离校'},${student.funds},${student.ranking}`;
           }).join('\n');
@@ -390,7 +387,7 @@ const StudentsManagement: React.FC = () => {
           <Form.Item name="keyword">
             <Input.Search
               placeholder="搜索学生姓名或学号"
-              
+
               style={{ width: 250 }}
               allowClear
               onSearch={() => searchForm.submit()}
@@ -425,12 +422,15 @@ const StudentsManagement: React.FC = () => {
         dataSource={students}
         rowKey="id"
         loading={loading}
+
+
         pagination={{
-          ...pagination,
-          showSizeChanger: true,
-          showQuickJumper: true,
-          showTotal: (total) => `共 ${total} 名学生`
-        }}
+            total: total,
+            defaultPageSize: 10,
+            showSizeChanger: true,
+            showQuickJumper: true,
+            showTotal: (total) => `共 ${total} 条学生`,
+          }}
         onChange={handleTableChange}
         rowSelection={{
           selectedRowKeys,
@@ -507,7 +507,7 @@ const StudentsManagement: React.FC = () => {
           >
             <Input placeholder="请输入8-12位学号" />
           </Form.Item>)}
-        
+
           {/* <Form.Item
             name="is_active"
             label="状态"

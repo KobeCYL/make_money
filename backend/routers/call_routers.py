@@ -41,6 +41,17 @@ def call():
     return jsonify({
         'status': '200'
     })
+@call_bp.route('/api/roll-call/clear-call-history', methods=['GET'])
+def clear_call_history():
+    lib = JsonOptions(lib_path)
+    call_data = lib.get_json()
+    call_data['call_history'] = []
+    call_data['interview_history'] = []
+    lib.set_json(call_data)
+
+    return jsonify({
+        'status': '200'
+    })
 
 
 # 获取随机面试官
@@ -84,7 +95,7 @@ def random_interviewers():
     if count > len(can_call_list):
         gap = count - len(can_call_list)
         for i in range(gap):
-            length = len(interviewed_list)
+            length = len(interviewed_list) -1
             index = random.randint(0, length)
             item = interviewed_list[index]
             new_interviewed_list.append(item)
@@ -273,6 +284,40 @@ def submit_result():
         return jsonify({
             'status': '200',
             'data': record_manager.get_all_records()
+        })
+    except Exception as e:
+        error_traceback = traceback.format_exc()  # 获取完整的错误堆栈
+        print(f"Error occurred: {error_traceback}")  # 打印完整堆栈信息
+
+        return jsonify({
+            'status': '400',
+            'data': None,
+            'msg': f'error: {str(e)}'
+        }), 500
+
+
+
+
+# 保存面试记录
+@call_bp.route('/api/roll-call/add-call_score', methods=['POST'])
+def add_call_score():
+    try:
+        data = request.get_json()
+        student_service = StudentService()
+        candidate = student_service.get_student_by_id(data['studentId'])
+
+        if candidate:
+          
+            candidate.funds += int(data['money'])
+            
+            student_service.update_student(candidate)
+
+       
+
+        
+        return jsonify({
+            'status': '200',
+            'data': candidate.__dict__
         })
     except Exception as e:
         error_traceback = traceback.format_exc()  # 获取完整的错误堆栈

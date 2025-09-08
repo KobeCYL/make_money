@@ -5,7 +5,7 @@ import { createStyles, keyframes } from 'antd-style';
 import { request } from '@umijs/max';
 import { CheckOutlined, CloseOutlined, TrophyOutlined } from '@ant-design/icons';
 import { getStudents, getInterviewers, getRandomStudent, getRankingList } from '@/services/roll-call';
-import { getRollCallGetCallStatus, getRollCallRandomStudent, postRollCallSubmitResult } from '@/services/makeMoney/call';
+import { getRollCallGetCallStatus, getRollCallRandomStudent, postRollCallAddCallScore, postRollCallSubmitResult } from '@/services/makeMoney/call';
 import { getStudentsSortFunds } from '@/services/makeMoney/user';
 
 // 抽奖动画
@@ -175,6 +175,7 @@ interface Interviewer {
   title: string;
   interviewCount: number;
   successRate: number;
+  student_id?: string;
 }
 
 interface InterviewRecord {
@@ -214,6 +215,7 @@ const RollCallOperation: React.FC = () => {
 
   // 动画状态
   const [showCelebration, setShowCelebration] = useState(false);
+  const [showCelebration2, setShowCelebration2] = useState(false);
 
   const init = async () => {
     const { data } = await getRollCallGetCallStatus();
@@ -252,13 +254,13 @@ const RollCallOperation: React.FC = () => {
     if (progress.current >= progress.total) {
       message.warning('开始新的一轮点名');
       // 重置状态
-      setSelectedStudents([]);
-      setStudentInterviewStates([]);
+      // setSelectedStudents([]);
+      // setStudentInterviewStates([]);
     }
 
     setIsRolling(true);
     setActiveStudentIndex(-1);
-    setStudentInterviewStates([]);
+    // setStudentInterviewStates([]);
 
     try {
       // 3秒抽奖动画
@@ -268,8 +270,14 @@ const RollCallOperation: React.FC = () => {
       });
 
       // 逐个添加学生
-      setSelectedStudents(prev => [...prev, ...data]);
+      setSelectedStudents(prev => {
 
+        const list = [...prev, ...data]
+
+        console.log('setSelectedStudents_list', list)
+        return list
+      });
+      console.log(studentInterviewStates, 'studentInterviewStates');
       // 初始化学生面试状态
       const initialStates: StudentInterviewState[] = data.map(student => ({
         studentId: student.id,
@@ -277,7 +285,13 @@ const RollCallOperation: React.FC = () => {
         interviewRecords: [],
         isCompleted: false
       }));
-      setStudentInterviewStates(prev => [...prev, ...initialStates]);
+      setStudentInterviewStates(prev => {
+
+        const list = [...prev, ...initialStates]
+
+        console.log('setStudentInterviewStates_list', list)
+        return list
+      });
 
       setActiveStudentIndex(0);
       init()
@@ -311,7 +325,7 @@ const RollCallOperation: React.FC = () => {
                 ...state,
                 selectedInterviewers: [ ...state.selectedInterviewers ,...data],
                 interviewRecords: [...state.interviewRecords, ...data.map(interviewer => ({
-                  interviewerId: interviewer.id,
+                  interviewerId: interviewer.id || interviewer.student_id,
                   question: '',
                   result: null,
                   reward: 0
@@ -328,9 +342,26 @@ const RollCallOperation: React.FC = () => {
   };
 
   // 关闭面试弹窗
-  const handleCloseInterviewerModal = () => {
-    setShowInterviewerModal(false);
-    setCurrentSelectingStudent(null);
+  const handleCloseInterviewerModal = async () => {
+    // 显示庆祝动画
+      setShowCelebration2(true);
+      setTimeout(() => setShowCelebration2(false), 2000);
+    // setTimeout(() => , 2100);
+    await postRollCallAddCallScore({
+      studentId: currentSelectingStudent?.id || '',
+      money: '1000'
+    })
+    setShowInterviewerModal(false)
+// 刷新排行榜
+      const { data } = await getStudentsSortFunds();
+      setRankingList(data?.map((item: any) => ({
+            id: item.student_id,
+            name:item.name,
+            avatar: item.id,
+            jobSeekingCount: item.applicant_count,
+            interviewCount: item.interviewer_count,
+            earnings: item.funds || 0,
+        })));
   };
 
   // 获取当前学生的面试状态
@@ -719,6 +750,33 @@ const [rewardRecipient, setRewardRecipient] = useState<'student' | 'interviewer'
              animation: `${rollAnimation} 1s ease-in-out`
            }}>
              <Typography.Title level={2} style={{ color: '#52c41a', margin: 0 }}>🎉 {rewardRecipient === 'student' ? '求职者: ' : '面试官: '}{rewardRecipient === 'student' ? currentSelectingStudent?.name : getCurrentStudentState(currentSelectingStudent?.id)?.selectedInterviewers[currentInterviewerIndex]?.name}, 奖励300元 🎉</Typography.Title>
+           </div>
+         </div>
+      )}
+
+
+      {/* 庆祝动画 */}
+       {showCelebration2 && (
+         <div style={{
+           position: 'fixed',
+           top: 0,
+           left: 0,
+           right: 0,
+           bottom: 0,
+           background: 'rgba(0,0,0,0.5)',
+           display: 'flex',
+           justifyContent: 'center',
+           alignItems: 'center',
+           zIndex: 9999
+         }}>
+           <div style={{
+             background: 'white',
+             padding: '40px',
+             borderRadius: '16px',
+             textAlign: 'center',
+             animation: `${rollAnimation} 1s ease-in-out`
+           }}>
+            <Typography.Title level={2} style={{ color: '#52c41a', margin: 0 }}>🎉 '奖励求职者: ' {currentSelectingStudent?.name}, 奖励1000元 🎉</Typography.Title>
            </div>
          </div>
        )}

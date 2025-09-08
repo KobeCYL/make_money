@@ -2,6 +2,34 @@
 /* eslint-disable */
 import { request } from "@umijs/max";
 
+/** 奖励面试者 POST /api/roll-call/add-call_score */
+export async function postRollCallAddCallScore(
+  body: {
+    studentId: string;
+    money: string;
+  },
+  options?: { [key: string]: any }
+) {
+  return request<Record<string, any>>("/api/roll-call/add-call_score", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** 清空点名历史 GET /api/roll-call/clear-call-history */
+export async function getRollCallClearCallHistory(options?: {
+  [key: string]: any;
+}) {
+  return request<Record<string, any>>("/api/roll-call/clear-call-history", {
+    method: "GET",
+    ...(options || {}),
+  });
+}
+
 /** 获取点名学生状态 GET /api/roll-call/get-call-status */
 export async function getRollCallGetCallStatus(options?: {
   [key: string]: any;
