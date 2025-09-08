@@ -251,6 +251,9 @@ const RollCallOperation: React.FC = () => {
   const handleRollCall = async (count: number) => {
     if (progress.current >= progress.total) {
       message.warning('开始新的一轮点名');
+      // 重置状态
+      setSelectedStudents([]);
+      setStudentInterviewStates([]);
     }
 
     setIsRolling(true);
@@ -264,10 +267,8 @@ const RollCallOperation: React.FC = () => {
         count: count
       });
 
-      // // 逐个显示学生（每个间隔0.5秒）
-      for (let i = 0; i < data.length; i++) {
-        setSelectedStudents(prev => [...prev, data[i]]);
-      }
+      // 逐个添加学生
+      setSelectedStudents(prev => [...prev, ...data]);
 
       // 初始化学生面试状态
       const initialStates: StudentInterviewState[] = data.map(student => ({
@@ -276,9 +277,7 @@ const RollCallOperation: React.FC = () => {
         interviewRecords: [],
         isCompleted: false
       }));
-      setStudentInterviewStates(prev => {
-        return [...prev, ...initialStates]
-      });
+      setStudentInterviewStates(prev => [...prev, ...initialStates]);
 
       setActiveStudentIndex(0);
       init()
@@ -290,7 +289,11 @@ const RollCallOperation: React.FC = () => {
   };
 
   // 打开面试官面试弹窗
-  const handleOpenInterviewerModal = async ( count: number, student = currentSelectingStudent) => {
+  const handleOpenInterviewerModal = async (count: number, student = selectedStudents[activeStudentIndex]) => {
+    if (!student) {
+      message.error('请先选择学生');
+      return;
+    }
     setCurrentSelectingStudent(student);
 
     try {

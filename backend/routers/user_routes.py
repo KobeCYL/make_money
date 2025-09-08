@@ -3,7 +3,7 @@ import json
 
 user_bp = Blueprint('user', __name__)
 
-@user_bp.route('/currentUser', methods=['GET'])
+@user_bp.route('/api/currentUser', methods=['GET'])
 def current_user():
     token = request.args.get('token')
     
@@ -47,7 +47,7 @@ def current_user():
             }
         }), 401
 
-@user_bp.route('/login/account', methods=['POST'])
+@user_bp.route('/api/login/account', methods=['POST'])
 def login():
     data = request.get_json()
     

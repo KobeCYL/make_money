@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile.frontend
     ports:
-      - "80:80"
+      - "9527:9527"
     depends_on:
       - backend
     restart: always

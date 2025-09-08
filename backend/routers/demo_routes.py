@@ -61,9 +61,10 @@ def login():
                 {
                     'status': 'ok',
                     'type': new_data['type'],
-                    'currentAuthority': 'admin'
+                    'currentAuthority': 'admin',
+                    'token': '123'
                 }
-            ), 201
+            ), 200
         else :
             return jsonify({
                 "error": '数据不对'
